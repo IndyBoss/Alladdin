@@ -1,0 +1,16 @@
+#questions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+form #firstQuestion {
+  display: inline;
+  width: 50%;
+}
+
+form #secondQuestion {
+  display: inline;
+  width: 50%;
+}
