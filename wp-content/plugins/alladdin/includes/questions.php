@@ -4,11 +4,13 @@ function questions() {
     global $wpdb;
     $result = '';
 
+    $result .= 'geupdate' . $_POST['pos_id'];
+
     if (isset($_POST['pos_id'])) {
       update_question_totals($_POST['pos_id'], $_POST['neg_id']);
       update_user_points();
     }
-    
+
     $firstQ = get_first_question();
     $secondQ = get_second_question($firstQ);
 
