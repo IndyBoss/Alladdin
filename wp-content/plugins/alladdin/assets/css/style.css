@@ -14,3 +14,23 @@ form #secondQuestion {
   display: inline;
   width: 50%;
 }
+
+#questions form input[type="submit"] {
+  padding: 50px;
+  margin-bottom: 30px;
+}
+
+#prizes {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#prizes a {
+  margin: 10px;
+}
+
+#prizes img {
+  border-radius: 5px;
+}
