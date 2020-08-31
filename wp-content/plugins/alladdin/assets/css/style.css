@@ -6,13 +6,15 @@
 }
 
 form #firstQuestion {
-  display: inline;
   width: 50%;
 }
 
 form #secondQuestion {
-  display: inline;
   width: 50%;
+}
+
+form #firstQuestion button[type="submit"]:hover, form #secondQuestion button[type="submit"]:hover {
+  box-shadow: 0 2px 20px rgba(45,53,89,.1);
 }
 
 #questions form input[type="submit"] {
@@ -27,10 +29,28 @@ form #secondQuestion {
   justify-content: center;
 }
 
-#prizes a {
+#prizes button[type="submit"] {
   margin: 10px;
+  background-color: #F2EFF1;
+}
+
+#prizes button[type="submit"]:hover {
+  background-color: #FFF;
+  box-shadow: 0 2px 20px rgba(45,53,89,.1);
 }
 
 #prizes img {
   border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+#prizes p {
+  margin: 10px 0 0 0;
+  color: #1D1D1D;
+}
+
+.isDisabled, .isDisabled img {
+  cursor: not-allowed;
+  opacity: 0.5;
+  background-color: none;
 }

@@ -17,6 +17,6 @@ foreach (glob($dir . "includes/*.php") as $filename) {
   require_once($filename);
 }
 
-foreach (glob($dir . "includes/components/*.php") as $filename) {
+foreach (glob($dir . "includes/components/*/*.php") as $filename) {
   require_once($filename);
 }
