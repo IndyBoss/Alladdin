@@ -1,6 +1,8 @@
 <?php
-function questions() {
-  if (current_user_can('subscriber') || current_user_can('administrator')) {
+function questions($atts) {
+  $a = shortcode_atts( array('edit_url'=>'#'), $atts );
+  $edit_url = esc_attr($a['edit_url']);
+  if (!current_user_can('subscriber') || current_user_can('administrator')) {
     global $wpdb;
     $result = '';
 
@@ -20,20 +22,47 @@ function questions() {
       $firstQ = get_first_question();
       $secondQ = get_second_question($firstQ);
 
-      $result .= '<h2>Totale punten: '.get_user_points().'</h2>
+      if (current_user_can('subscriber') || current_user_can('administrator')) {
+      $result .= '<h2>Totale punten: '. get_user_points().'</h2>
+                  <a href="/'.$edit_url.'">&#9998; Campagnes aanpassen</a>
                   <div id="questions">
-                    <form action="" id="firstQuestion" method="post">
-                      <input type="hidden" name="pos_id" value="'.$firstQ->ID.'">
-                      <input type="hidden" name="neg_id" value="'.$secondQ->ID.'">
-                      <button type="submit"><p>'.$firstQ->question.'</p></button>
-                    </form>
+                    <div id="leftBox">
+                      <img id="questionImage" src="../wp-content/plugins/alladdin/assets/images/wireframe_browser">
+                    </div>
+                    <div id="rightBox">
+                    Ga met de aanwijzer over de knoppen voor een voorbeeld.
+                        <form action="" id="firstQuestion" method="post">
+                          <input type="hidden" name="pos_id" value="'.$firstQ->ID.'">
+                          <input type="hidden" name="neg_id" value="'.$secondQ->ID.'">
+                          <button id="firstQuestionBtn" type="submit"><p>'.$firstQ->question.'</p></button>
+                        </form>
+                        <div class="questionSpacer"><h1>OF</h1></div>
+                        <form action="" id="secondQuestion" method="post">
+                          <input type="hidden" name="pos_id" value="'.$secondQ->ID.'">
+                          <input type="hidden" name="neg_id" value="'.$firstQ->ID.'">
+                          <button id="secondQuestionBtn" type="submit"><p>'.$secondQ->question.'</p></button>
+                        </form>
+                      </div>
+                    </div>
 
-                    <form action="" id="secondQuestion" method="post">
-                      <input type="hidden" name="pos_id" value="'.$secondQ->ID.'">
-                      <input type="hidden" name="neg_id" value="'.$firstQ->ID.'">
-                      <button type="submit"><p>'.$secondQ->question.'</p></button>
-                    </form>
-                  </div>';
+                    <script type="text/javascript">
+                      document.getElementById("firstQuestionBtn").addEventListener("mouseover", mouseOver1);
+                      document.getElementById("firstQuestionBtn").addEventListener("mouseout", mouseOut);
+                      document.getElementById("secondQuestionBtn").addEventListener("mouseover", mouseOver2);
+                      document.getElementById("secondQuestionBtn").addEventListener("mouseout", mouseOut);
+
+                      function mouseOver1() {
+                        document.getElementById("questionImage").src = "'. $firstQ->img_url .'";
+                      }
+                      function mouseOver2() {
+                        document.getElementById("questionImage").src = "'. $secondQ->img_url .'";
+                      }
+
+                      function mouseOut() {
+                        document.getElementById("questionImage").src = "../wp-content/plugins/alladdin/assets/images/wireframe_browser";
+                      }
+                    </script>';
+      }
 
       return $result;
     }

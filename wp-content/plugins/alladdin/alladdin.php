@@ -8,7 +8,7 @@
 
 $dir = 'wp-content/plugins/alladdin/';
 
-wp_register_style('Alladdin_styling', '/'.$dir.'assets/css/style.css');
+wp_register_style('Alladdin_styling', '/'.$dir.'assets/css/style.css', array(), rand(111,9999), 'all' );
 wp_enqueue_style( 'Alladdin_styling');
 
 wp_enqueue_script( 'JQuery', '/'.$dir.'assets/js/JQuery.js');
