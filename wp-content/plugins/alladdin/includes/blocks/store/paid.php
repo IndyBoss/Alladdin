@@ -33,9 +33,11 @@ $user_points = get_user_points();
   <hr>
 
   <?php if ($user_points < $_POST["price"]) : ?>
-    <h3>Spijtig genoeg kan je niet onder nul gaan.</h3>
+    <h3 class="center">Spijtig genoeg kan je niet onder nul gaan.</h3>
+    <button type="button" class="questions-btn" onclick="location.href='/prizes'">Terug</button>
   <?php else: ?>
-    <h3>Voucher code: <?php echo uniqid(); ?></h3>
-    <h3>Punten afgetrokken van je totaal. Je hebt nog: <?php echo update_user_score_paid($_POST["price"],$user_points); ?> punten</h3>
+    <h3 class="center">Voucher code: <?php echo uniqid(); ?></h3>
+    <h3 class="center">Punten afgetrokken van je totaal. Je hebt nog: <?php echo update_user_score_paid($_POST["price"],$user_points); ?> punten</h3>
+    <button type="button" class="questions-btn" onclick="location.href='/prizes'">Begrepen</button>
   <?php endif; ?>
 </div>

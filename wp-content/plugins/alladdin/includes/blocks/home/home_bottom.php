@@ -49,7 +49,6 @@ $image = get_field('image') ?: '../../../assets/images/starbucksFreeLatte.jpg';
           width: 100vw !important;
           height: 90vh;
           max-width: 100vw !important;
-          margin-left: -11.11%;
           display: flex;
           justify-content: center;
           align-items: center;
@@ -57,18 +56,22 @@ $image = get_field('image') ?: '../../../assets/images/starbucksFreeLatte.jpg';
           right: 50%;
           margin-left: -50vw !important;
           margin-right: -50vw !important;
+          margin-top: 80px;
+          margin-bottom: -30px;
       }
       <?php echo "#".esc_attr($id); ?>::before {
-          content: "";
-          position: absolute;
-          width: 100%;
-          max-width: 100vw;
-          margin: 0 !important;
-          height: 100%;
-          background: url("<?php echo $image ?>");
-          background-repeat: no-repeat;
-          background-size: cover;
-          background-position: top center;
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-width: 100vw;
+        margin: 0 !important;
+        height: 100%;
+        background: url("<?php echo $image ?>");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: top center;
       }
     </style>
 </div>

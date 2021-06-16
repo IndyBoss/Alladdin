@@ -1,7 +1,7 @@
 <?php
 
 function list_question_location($a) {
-  $result = '<br><br>
+  $result = '
               <form action="/'. $a .'" method="post">
               <label for="question"><b>Vraag</b></label>
               <input type="text" placeholder="Vraag" name="question" required><br>

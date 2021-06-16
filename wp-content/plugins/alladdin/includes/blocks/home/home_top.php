@@ -61,6 +61,7 @@ if (!is_user_logged_in()) {
           right: 50%;
           margin-left: -50vw !important;
           margin-right: -50vw !important;
+          margin-top: -30px;
       }
       <?php echo "#".esc_attr($id); ?>::before {
           content: "";

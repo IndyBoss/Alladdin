@@ -44,7 +44,7 @@ function campaigns($atts) {
 
     $total_query = "SELECT COUNT(1) FROM (${query}) AS combined_table";
     $total = $wpdb->get_var( $total_query );
-    $items_per_page = 10;
+    $items_per_page = 5;
     $page = isset( $_GET['cpage'] ) ? abs( (int) $_GET['cpage'] ) : 1;
     $offset = ( $page * $items_per_page ) - $items_per_page;
     $conn = $wpdb->get_results( $query . " LIMIT ${offset}, ${items_per_page}" );

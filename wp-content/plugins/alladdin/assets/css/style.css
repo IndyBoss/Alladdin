@@ -2,8 +2,12 @@
   padding-bottom: 0 !important;
 }
 
+.center {
+  text-align: center;
+}
+
 .entry {
-  margin: 0 auto;
+  margin: 30px; auto;
 }
 
 .entry > h1 {
@@ -139,7 +143,7 @@
 }
 
 /**** HOME TOP ****/
-.home-top-content, .home-bottom-contnet {
+.home-top-content, .home-bottom-content {
     position: relative;
     text-align: center;
     margin: 0.625rem;
@@ -418,6 +422,12 @@
   margin-bottom: 10px;
 }
 
+/**** HOME BOTTOM ****/
+.home-bottom-content {
+  bottom: -10vh;
+  align-content: center;
+}
+
 
 
 /***********************
@@ -450,6 +460,7 @@
   border-radius: 25px;
   border: none;
   box-shadow: 0 11px 36px 0 rgba(70,89,138,.25);
+  margin-top: 40px;
 }
 
 .questions-btn:hover {
@@ -469,6 +480,7 @@
   width: 300px;
   align-items: center;
   justify-content: center;
+  margin-top: 40px;
 }
 
 .questions-images {

@@ -41,7 +41,7 @@ $conn = $wpdb->get_results('SELECT * FROM wp_t9smq8bdpj_prize ORDER BY price');
 
 
 <?php if (current_user_can('subscriber') || current_user_can('administrator')) : ?>
-    <h3>Totale punten: <?php echo $user_points ?> </h3>
+    <h3 class="center">Totale punten: <?php echo $user_points ?> </h3>
     <div id='prizes'>
     <?php foreach ($conn as $row) : ?>
       <?php if ($user_points >= $row->price): ?>

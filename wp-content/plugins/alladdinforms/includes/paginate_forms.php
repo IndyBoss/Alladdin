@@ -1,7 +1,7 @@
 <?php
 function paginate_forms($add_url, $data_url, $g_id, $questionaire_url) {
     global $wpdb;
-    $result = "<br><br>";
+    $result = "";
     $query = "";
 
     if ($g_id == "") {
@@ -22,6 +22,12 @@ function paginate_forms($add_url, $data_url, $g_id, $questionaire_url) {
     $offset = ( $page * $items_per_page ) - $items_per_page;
     $conn = $wpdb->get_results( $query . " ORDER BY Date LIMIT ${offset}, ${items_per_page}" );
 
+    $filledInForms = [];
+    $search = $wpdb->get_results( "SELECT Form_ID FROM wp_filled_forms_list WHERE User_ID = ".get_current_user_id() );
+    foreach ($search as $s) {
+      array_push($filledInForms, $s->Form_ID);
+    }
+
     if (current_user_can('administrator')) {
   		$result .= popup($add_url)."<table><tr><th>#</th><th>Naam</th><th>Groep</th><th>Link</th><th>Acties</th></tr>";
   	} elseif (current_user_can('subscriber')) {
@@ -33,14 +39,7 @@ function paginate_forms($add_url, $data_url, $g_id, $questionaire_url) {
     if (!empty($conn[0]->ID)) {
       foreach ($conn as $c) {
         if (current_user_can('subscriber')) {
-          $filled = [];
-          $search = $wpdb->get_results( "SELECT Form_ID FROM wp_filled_forms_list WHERE User_ID = ".get_current_user_id() );
-          foreach ($search as $s) {
-            $i = 0;
-            $filled[0] = $s->Form_ID;
-            $i++;
-          }
-          if (!in_array($c->ID, $filled)) {
+          if (!in_array($c->ID, $filledInForms)) {
             $result .= "<tr><td>".$c->name."</td><td>".get_group_name($c->group_id)."</td><td><a href='/".$questionaire_url."?q=".$c->link."' target='_blank' >Vul formulier in</a></td></tr>";
           }
         } else {

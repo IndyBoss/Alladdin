@@ -45,10 +45,10 @@ $questionaires_url = get_field('questionaires_url') ?: 'questionaires';
       // Check if a user answered 5 questions
       if (get_user_questions_today() >= 4) {
         ?>
-        <h3>Je hebt 5 vragen beantwoord, kom morgen terug!</h3>
+        <h3 class="center">Je hebt 5 vragen beantwoord, kom morgen terug!</h3>
         <br>
         <div class="questions-btns">
-          <h3>Totale punten: <?php echo get_user_points() ?></h3>
+          <!-- <h3>Totale punten: <?php echo get_user_points() ?></h3> -->
           <button type="button" class="questions-btn" onclick="location.href='/<?php echo $questionaires_url ?>'">Vragenlijsten voor extra punten</button>
           <?php if (!current_user_can('subscriber')): ?>
             <button type="button" class="questions-btn" onclick="location.href='/<?php echo $edit_url ?>'"> &#9998; Campagnes aanpassen</button>
@@ -91,7 +91,7 @@ $questionaires_url = get_field('questionaires_url') ?: 'questionaires';
           </form>
         </div>
         <div class="questions-btns">
-          <h3>Totale punten: <?php echo get_user_points() ?></h3>
+          <!-- <h3>Totale punten: <?php echo get_user_points() ?></h3> -->
           <button type="button" class="questions-btn" onclick="location.href='/<?php echo $questionaires_url ?>'">Vragenlijsten voor extra punten</button>
           <?php if (!current_user_can('subscriber')): ?>
             <button type="button" class="questions-btn" onclick="location.href='/<?php echo $edit_url ?>'"> &#9998; Campagnes aanpassen</button>
