@@ -22,70 +22,72 @@
 /* [ General ]
 /*-------------------------------------------------------------------------------*/
 
-/**
- * Adds classes to the html tag
- *
- * @since 1.0.0
- */
+
 if ( ! function_exists( 'oceanwp_html_classes' ) ) {
 
+	/**
+	 * Adds classes to the html tag
+	 *
+	 * @since 1.0.0
+	 */
 	function oceanwp_html_classes() {
 
-		// Setup classes array
+		// Setup classes array.
 		$classes = array();
 
-		// Main class
+		// Main class.
 		$classes[] = 'html';
 
-		// Set keys equal to vals
+		// Set keys equal to vals.
 		$classes = array_combine( $classes, $classes );
-		
-		// Apply filters for child theming
+
+		// Apply filters for child theming.
 		$classes = apply_filters( 'ocean_html_classes', $classes );
 
-		// Turn classes into space seperated string
+		// Turn classes into space seperated string.
 		$classes = implode( ' ', $classes );
 
-		// Return classes
+		// Return classes.
 		return $classes;
 
 	}
 
 }
 
-/**
- * Adds classes to the body tag
- *
- * @since 1.0.0
- */
 if ( ! function_exists( 'oceanwp_body_classes' ) ) {
 
+	/**
+	 * Adds classes to the body tag
+	 *
+	 * @param obj $classes    body class.
+	 * @since 1.0.0
+	 */
 	function oceanwp_body_classes( $classes ) {
 
-		// Vars
+		// Vars.
 		$post_layout  = oceanwp_post_layout();
 		$layout_style = get_theme_mod( 'ocean_main_layout_style', 'wide' );
 		$post_id      = oceanwp_post_id();
 		$mobile_style = oceanwp_mobile_menu_style();
 
-		// RTL
+		// RTL.
 		if ( is_rtl() ) {
 			$classes[] = 'rtl';
 		}
 		
-		// Main class
+		// Main class.
 		$classes[] = 'oceanwp-theme';
 
-		// Mobile menu style
+		// Mobile menu style.
 		$classes[] = $mobile_style . '-mobile';
 
-		// If video header
+		// If video header.
 		if ( function_exists( 'has_header_video' )
 			&& has_header_video() ) {
 			$classes[] = 'has-header-video';
 		}
 
-		// Boxed layout
+		// Boxed layout.
 		if ( 'boxed' == $layout_style ) {
 			$classes[] = 'boxed-layout';
 
@@ -94,12 +96,12 @@ if ( ! function_exists( 'oceanwp_body_classes' ) ) {
 			}
 		}
 
-		// Separate layout
+		// Separate layout.
 		if ( 'separate' == $layout_style ) {
 			$classes[] = 'separate-layout';
 		}
 
-		// If separate style nad blog page
+		// If separate style nad blog page.
 		if ( 'separate' == $layout_style
 			&& ( is_home()
 				|| is_category()
@@ -109,31 +111,31 @@ if ( ! function_exists( 'oceanwp_body_classes' ) ) {
 			$classes[] = 'separate-blog';
 		}
 
-		// If is not custom header created with Elementor Pro 2.0
+		// If is not custom header created with Elementor Pro 2.0.
 		if ( ! function_exists( 'elementor_location_exits' ) || ! elementor_location_exits( 'header', true ) ) {
 
-			// Top menu header style to control the responsive
+			// Top menu header style to control the responsive.
 			if ( 'top' == oceanwp_header_style() ) {
 				$classes[] = 'top-header-style';
 			}
 
-			// Medium header style to control the responsive
+			// Medium header style to control the responsive.
 			if ( 'medium' == oceanwp_header_style() ) {
 				$classes[] = 'medium-header-style';
 			}
 
-			// Vertical header style
+			// Vertical header style.
 			if ( 'vertical' == oceanwp_header_style() ) {
 
-				// Vertical header style to control the wrap margin left
+				// Vertical header style to control the wrap margin left.
 				$classes[] = 'vertical-header-style';
 
-				// Header position
+				// Header position.
 				$position  = get_theme_mod( 'ocean_vertical_header_position', 'left-header' );
 				$position  = $position ? $position : 'left-header';
 				$classes[] = $position;
 
-				// If default collapse
+				// If default collapse.
 				$vh_collapse_width = get_theme_mod( 'ocean_vertical_header_collapse_width', '1280' );
 				if ( empty( $vh_collapse_width )
 					|| '1280' == $vh_collapse_width ) {
@@ -142,7 +144,7 @@ if ( ! function_exists( 'oceanwp_body_classes' ) ) {
 
 			}
 
-			// Add transparent class for header styles
+			// Add transparent class for header styles.
 			if ( 'transparent' == oceanwp_header_style()
 				|| ( 'full_screen' == oceanwp_header_style() && true == get_theme_mod( 'ocean_full_screen_header_transparent', false ) )
 				|| ( 'center' == oceanwp_header_style() && true == get_theme_mod( 'ocean_center_header_transparent', false ) )
@@ -150,13 +152,13 @@ if ( ! function_exists( 'oceanwp_body_classes' ) ) {
 				$classes[] = 'has-transparent-header';
 			}
 
-			// Add transparent class for the vertical header style
+			// Add transparent class for the vertical header style.
 			if ( 'vertical' == oceanwp_header_style()
 				&& true == get_theme_mod( 'ocean_vertical_header_transparent', false ) ) {
 				$classes[] = 'has-vh-transparent';
 			}
 
-			// If vertical header closed
+			// If vertical header closed.
 			if ( 'vertical' == oceanwp_header_style()
 				&& true == get_theme_mod( 'ocean_vertical_header_closed', false ) ) {
 				$classes[] = 'vh-closed';
@@ -164,116 +166,115 @@ if ( ! function_exists( 'oceanwp_body_classes' ) ) {
 
 		}
 
-		// If no header border bottom
+		// If no header border bottom.
 		if ( true != get_theme_mod( 'ocean_has_header_border_bottom', true ) ) {
 			$classes[] = 'no-header-border';
 		}
 
-		// If no custom mobile breakpoint
+		// If no custom mobile breakpoint.
 		if ( '959' == get_theme_mod( 'ocean_mobile_menu_breakpoints', '959' ) ) {
 			$classes[] = 'default-breakpoint';
 		}
 
-		// Sidebar enabled
+		// Sidebar enabled.
 		if ( 'left-sidebar' == $post_layout
 			|| 'right-sidebar' == $post_layout
 			|| 'both-sidebars' == $post_layout ) {
 			$classes[] = 'has-sidebar';
 		}
 
-		// Mobile sidebar order
+		// Mobile sidebar order.
 		if ( 'sidebar-content' == oceanwp_sidebar_order() ) {
 			$classes[] = 'sidebar-content';
 		}
 
-		// Content layout
+		// Content layout.
 		if ( $post_layout ) {
 			$classes[] = 'content-'. $post_layout;
 		}
 
-		// If full width and has content width
+		// If full width and has content width.
 		if ( 'full-width' == $post_layout
 			&& '0' != get_theme_mod( 'ocean_blog_single_content_width', '700' ) ) {
 			$classes[] = 'content-max-width';
 		}
 
-		// Both sidebars layout style
+		// Both sidebars layout style.
 		if ( 'both-sidebars' == $post_layout ) {
 			$classes[] = oceanwp_both_sidebars_style();
 		}
 
-		// Single Post cagegories
+		// Single Post cagegories.
 		if ( is_singular( 'post' ) ) {
 			$cats = get_the_category( $post_id );
 			foreach ( $cats as $cat ) {
-				$classes[] = 'post-in-category-'. $cat->category_nicename;
+				$classes[] = 'post-in-category-' . $cat->category_nicename;
 			}
 		}
 
-		// If landing page template
+		// If landing page template.
 		if ( is_page_template( 'templates/landing.php' ) ) {
 			$classes[] = 'landing-page';
 		}
 
-		// Topbar
+		// Topbar.
 		if ( oceanwp_display_topbar() ) {
 			$classes[] = 'has-topbar';
 		}
 
-		// Title with Background Image
+		// Title with Background Image.
 		if ( 'background-image' == oceanwp_page_header_style() ) {
 			$classes[] = 'page-with-background-title';
 		}
 
-		// Disabled header
+		// Disabled header.
 		if ( ! oceanwp_has_page_header() ) {
 			$classes[] = 'page-header-disabled';
 		}
 
-		// Breadcrumbs
+		// Breadcrumbs.
 		if ( oceanwp_has_breadcrumbs() ) {
 			$classes[] = 'has-breadcrumbs';
 		}
 
-		// If blog grid style
+		// If blog grid style.
 		if ( 'grid-entry' == get_theme_mod( 'ocean_blog_style', 'large-entry' ) ) {
 			$classes[] = 'has-blog-grid';
 		}
 
-		// Fixed footer
+		// Fixed footer.
 		if ( 'on' == get_theme_mod( 'ocean_fixed_footer', 'off' ) ) {
 			$classes[] = 'has-fixed-footer';
 		}
 
-		// Parallax footer
+		// Parallax footer.
 		if ( 'on' == get_theme_mod( 'ocean_parallax_footer', 'off' ) ) {
 			$classes[] = 'has-parallax-footer';
 		}
 
-		// Pagination
+		// Pagination.
 		$pagination_align = get_theme_mod( 'ocean_pagination_align', 'right' );
 		if ( 'right' != $pagination_align ) {
-			$classes[] = 'pagination-'. $pagination_align;
+			$classes[] = 'pagination-' . $pagination_align;
 		}
 
-		// If WooCommerce is active
+		// If WooCommerce is active.
 		if ( OCEANWP_WOOCOMMERCE_ACTIVE ) {
 
-			// If grid/list buttons
+			// If grid/list buttons.
 			if ( get_theme_mod( 'ocean_woo_grid_list', true ) ) {
 				$classes[] = 'has-grid-list';
 			}
 
-			// Tabs position
+			// Tabs position.
 			$woo_tabs = get_theme_mod( 'ocean_woo_product_meta_tabs_position', 'center' );
 			if ( oceanwp_is_woo_single()
 				&& 'center' != $woo_tabs ) {
-				$classes[] = 'woo-'. $woo_tabs .'-tabs';
+				$classes[] = 'woo-' . $woo_tabs . '-tabs';
 			}
-
 		}
 
-		// Return classes
+		// Return classes.
 		return $classes;
 
 	}
@@ -297,24 +298,25 @@ if ( ! function_exists( 'wp_body_open' ) ) {
 	}
 }
 
-/**
- * Store current post ID
- *
- * @since 1.0.0
- */
+
 if ( ! function_exists( 'oceanwp_post_id' ) ) {
 
+	/**
+	 * Store current post ID
+	 *
+	 * @since 1.0.0
+ 	*/
 	function oceanwp_post_id() {
 
-		// Default value
+		// Default value.
 		$id = '';
 
-		// If singular get_the_ID
+		// If singular get_the_ID.
 		if ( is_singular() ) {
 			$id = get_the_ID();
 		}
 
-		// Get ID of WooCommerce product archive
+		// Get ID of WooCommerce product archive.
 		elseif ( OCEANWP_WOOCOMMERCE_ACTIVE && is_shop() ) {
 			$shop_id = wc_get_page_id( 'shop' );
 			if ( isset( $shop_id ) ) {
@@ -322,18 +324,18 @@ if ( ! function_exists( 'oceanwp_post_id' ) ) {
 			}
 		}
 
-		// Posts page
+		// Posts page.
 		elseif ( is_home() && $page_for_posts = get_option( 'page_for_posts' ) ) {
 			$id = $page_for_posts;
 		}
 
-		// Apply filters
+		// Apply filters.
 		$id = apply_filters( 'ocean_post_id', $id );
 
-		// Sanitize
+		// Sanitize.
 		$id = $id ? $id : '';
 
-		// Return ID
+		// Return ID.
 		return $id;
 
 	}
@@ -1718,7 +1720,7 @@ if ( ! function_exists( 'oceanwp_add_search_to_menu' ) ) {
 		}
 
 		// Add search item to menu
-		$items .= '<li class="search-toggle-li">';
+		$items .= '<li class="search-toggle-li" ' . apply_filters( 'oceanwp_attrs_nav_search_bar', '' ) . '>';
 			if ( 'full_screen' == $header_style ) {
 				$items .= '<form method="get" action="'. esc_url( home_url( '/' ) ) .'" class="header-searchform">';
 					$items .= '<input type="search" name="s" value="" autocomplete="off" />';
@@ -1739,7 +1741,7 @@ if ( ! function_exists( 'oceanwp_add_search_to_menu' ) ) {
 					}
 				$items .= '</form>';
 			} else {
-				$items .= '<a href="#" class="site-search-toggle'. $class .'" aria-label="'. esc_attr( 'Search website', 'oceanwp' ) .'">';
+				$items .= '<a href="#/" class="site-search-toggle'. $class .'" aria-label="'. esc_attr( 'Search website', 'oceanwp' ) .'">';
 					$items .= '<span class="icon-magnifier" aria-hidden="true"></span>';
 				$items .= '</a>';
 			}
@@ -1786,7 +1788,7 @@ if ( ! function_exists( 'oceanwp_top_header_search' ) ) {
 
 		// Add search item to menu
 		echo '<div id="search-toggle">';
-			echo '<a href="#" class="site-search-toggle'. esc_attr( $class ) .'" aria-label="'. esc_attr__( 'Search website', 'oceanwp' ) .'">';
+			echo '<a href="#/" class="site-search-toggle'. esc_attr( $class ) .'" aria-label="'. esc_attr__( 'Search website', 'oceanwp' ) .'">';
 				echo '<span class="icon-magnifier" aria-hidden="true"></span>';
 			echo '</a>';
 		echo '</div>';
@@ -1934,20 +1936,20 @@ if ( ! function_exists( 'oceanwp_page_header_style' ) ) {
 
 	function oceanwp_page_header_style() {
 
-		// Get default page header style defined in Customizer
+		// Get default page header style defined in Customizer.
 		$style = get_theme_mod( 'ocean_page_header_style' );
 
-		// If featured image in page header
+		// If featured image in page header.
 		if ( true == get_theme_mod( 'ocean_blog_single_featured_image_title', false )
 			&& is_singular( 'post' )
 			&& has_post_thumbnail() ) {
 			$style = 'background-image';
 		}
 
-		// Sanitize data
+		// Sanitize data.
 		$style = ( 'default' == $style ) ? '' : $style;
 		
-		// Apply filters and return
+		// Apply filters and return.
 		return apply_filters( 'ocean_page_header_style', $style );
 
 	}
@@ -3097,6 +3099,26 @@ if ( ! function_exists( 'oceanwp_blog_single_meta' ) ) {
 }
 
 /**
+ * Returns reading time
+ *
+ * @since 1.8.4
+*/
+if ( ! function_exists( 'ocean_reading_time' ) ) {
+
+	function ocean_reading_time() {
+
+		global $post;
+
+		$content      = get_post_field( 'post_content', $post->ID );
+		$word_count   = str_word_count( strip_tags( $content ) );
+		$reading_time = ceil( $word_count / 200 );
+
+		$owp_reading_time = $reading_time . " " . esc_html__( 'min(s) read', 'oceanwp' );
+		return apply_filters( 'oceanwp_post_reading_time', $owp_reading_time );
+	}
+}
+
+/**
  * Comments and pingbacks
  *
  * @since 1.0.0
@@ -3114,7 +3136,7 @@ if ( ! function_exists( 'oceanwp_comment' ) ) {
 		<li <?php comment_class(); ?> id="comment-<?php comment_ID(); ?>">
 
 			<article id="comment-<?php comment_ID(); ?>" class="comment-container">
-				<p><?php esc_html_e( 'Pingback:', 'oceanwp' ); ?> <span><?php oceanwp_schema_markup( 'author_name' ); ?>><?php comment_author_link(); ?></span> <?php edit_comment_link( esc_html__( '(Edit)', 'oceanwp' ), '<span class="edit-link">', '</span>' ); ?></p>
+				<p><?php esc_html_e( 'Pingback:', 'oceanwp' ); ?> <span <?php oceanwp_schema_markup( 'author_name' ); ?>><?php comment_author_link(); ?></span> <?php edit_comment_link( esc_html__( '(Edit)', 'oceanwp' ), '<span class="edit-link">', '</span>' ); ?></p>
 			</article>
 
 			<?php
@@ -3183,11 +3205,22 @@ if ( ! function_exists( 'oceanwp_modify_comment_form_fields' ) ) {
 		$commenter = wp_get_current_commenter();
 		$req       = get_option( 'require_name_email' );
 
-		$fields['author'] 	= '<div class="comment-form-author"><label for="author" class="screen-reader-text">'. esc_html( 'Enter your name or username', 'screen reader text for comment author', 'oceanwp' ) . '</label><input type="text" name="author" id="author" value="'. esc_attr( $commenter['comment_author'] ) .'" placeholder="'. esc_attr__( 'Name (required)', 'oceanwp' ) .'" size="22" tabindex="0"'. ( $req ? ' aria-required="true"' : '' ) .' class="input-name" /></div>';
+		// Labels.
+		if ( $req ) {
+			$comment_name = oceanwp_theme_strings( 'owp-string-comment-name-req', false, 'oceanwp' );
+			$comment_email = oceanwp_theme_strings( 'owp-string-comment-email-req', false, 'oceanwp' );
+		} else {
+			$comment_name = oceanwp_theme_strings( 'owp-string-comment-name', false, 'oceanwp' );
+			$comment_email = oceanwp_theme_strings( 'owp-string-comment-email', false, 'oceanwp' );
+		}
 
-		$fields['email'] 	= '<div class="comment-form-email"><label for="email" class="screen-reader-text">'. esc_html( 'Enter your email', 'screen reader text for comment author email', 'oceanwp' ) . '</label><input type="text" name="email" id="email" value="'. esc_attr( $commenter['comment_author_email'] ) .'" placeholder="'. esc_attr__( 'Email (required)', 'oceanwp' ) .'" size="22" tabindex="0"'. ( $req ? ' aria-required="true"' : '' ) .' class="input-email" /></div>';
+		$comment_site = oceanwp_theme_strings( 'owp-string-comment-website', false, 'oceanwp' );
 
-		$fields['url'] 		= '<div class="comment-form-url"><label for="url" class="screen-reader-text">'. esc_html( 'Enter your website URL (optional)', 'screen reader text for comment author website url', 'oceanwp' ) . '</label><input type="text" name="url" id="url" value="'. esc_attr( $commenter['comment_author_url'] ) .'" placeholder="'. esc_attr__( 'Website', 'oceanwp' ) .'" size="22" tabindex="0" class="input-website" /></div>';
+		$fields['author'] 	= '<div class="comment-form-author"><label for="author" class="screen-reader-text">'. esc_html__( 'Enter your name or username to comment', 'oceanwp' ) . '</label><input type="text" name="author" id="author" value="'. esc_attr( $commenter['comment_author'] ) .'" placeholder="'. $comment_name .'" size="22" tabindex="0"'. ( $req ? ' aria-required="true"' : '' ) .' class="input-name" /></div>';
+
+		$fields['email'] 	= '<div class="comment-form-email"><label for="email" class="screen-reader-text">'. esc_html__( 'Enter your email address to comment', 'oceanwp' ) . '</label><input type="text" name="email" id="email" value="'. esc_attr( $commenter['comment_author_email'] ) .'" placeholder="'. $comment_email .'" size="22" tabindex="0"'. ( $req ? ' aria-required="true"' : '' ) .' class="input-email" /></div>';
+
+		$fields['url'] 		= '<div class="comment-form-url"><label for="url" class="screen-reader-text">'. esc_html__( 'Enter your website URL (optional)', 'oceanwp' ) . '</label><input type="text" name="url" id="url" value="'. esc_attr( $commenter['comment_author_url'] ) .'" placeholder="'. $comment_site .'" size="22" tabindex="0" class="input-website" /></div>';
 
 		return $fields;
 
@@ -4338,6 +4371,8 @@ if ( ! function_exists( 'oceanwp_get_schema_markup' ) ) {
 			else {
 				$schema = 'itemscope="itemscope" itemtype="https://schema.org/WebPage"';
 			}
+
+			return apply_filters( 'oceanwp_schema_location_html', $schema );
 		}
 
 		// Header
@@ -4502,4 +4537,59 @@ if ( ! function_exists( 'oceanwp_default_color_palettes' ) ) {
 
 	}
 
+}
+
+/**
+ * Create list of attributes into a string and apply filter baes on context
+ *
+ * @since 1.8.7
+ * @param string $context    The context, to build filter name.
+ * @param array  $attributes To load defaults attributes.
+ * @param array  $args       Custom data to pass to filter.
+ * @return string String of HTML attributes and values.
+ */
+function owp_attr( $context, $attributes = array(), $args = array() ) {
+
+	$attributes = owp_parse_attr( $context, $attributes, $args );
+
+	$output = '';
+
+	// loop through attributes and build attribute string.
+	foreach ( $attributes as $key => $value ) {
+
+		if ( ! $value ) {
+			continue;
+		}
+
+		if ( true === $value ) {
+			$output .= esc_html( $key ) . ' ';
+		} else {
+			$output .= sprintf( '%s="%s" ', esc_html( $key ), esc_attr( $value ) );
+		}
+	}
+
+	$output = apply_filters( "owp_attr_{$context}_output", $output, $attributes, $context, $args );
+
+	return trim( $output );
+}
+
+/**
+ * Create list of attributes into a string and apply filter baes on context
+ *
+ * @since 1.8.7
+ * @param string $context    The context, to build filter name.
+ * @param array  $attributes To load defaults attributes.
+ * @param array  $args       Custom data to pass to filter.
+ * @return string String of HTML attributes and values.
+ */
+function owp_parse_attr( $context, $attributes = array(), $args = array() ) {
+
+	$defaults = array(
+		'class' => sanitize_html_class( $context ),
+	);
+
+	$attributes = wp_parse_args( $attributes, $defaults );
+
+	// Apply filter based on context.
+	return apply_filters( "owp_attr_{$context}", $attributes, $context, $args );
 }

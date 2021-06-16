@@ -3,7 +3,8 @@ function update_question_open($a, $qid) {
   global $wpdb;
   $conn = $wpdb->get_results("SELECT * FROM `wp_question` WHERE ID=" . $qid);
 
-  $result = '<form action="/'. $a .'" method="post">
+  $result = '<br><br>
+              <form action="/'. $a .'" method="post">
               <label for="question"><b>Vraag</b></label>
               <input type="text" placeholder="Vraag" name="question"';
 

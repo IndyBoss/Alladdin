@@ -6,7 +6,8 @@ function update_question_multiple($a, $qid) {
   $pieces = explode("|", $conn[0]->text);
 
 
-  $result = '<form action="/'. $a .'" method="post">
+  $result = '<br><br>
+              <form action="/'. $a .'" method="post">
               <label for="question"><b>Vraag</b></label>
               <input type="text" placeholder="Vraag" name="question"';
 

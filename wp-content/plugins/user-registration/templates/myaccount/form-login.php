@@ -36,6 +36,20 @@ if ( 'bordered' === $form_template ) {
 	$template_class = 'ur-frontend-form--rounded ur-frontend-form--rounded-edge';
 }
 
+$labels       = array(
+	'username'           => get_option( 'user_registration_label_username_or_email', __( 'Gebruikersnaam of e-mailadres', 'user-registration' ) ),
+	'password'           => get_option( 'user_registration_label_password', __( 'Wachtwoord', 'user-registration' ) ),
+	'remember_me'        => get_option( 'user_registration_label_remember_me', __( 'Onthou mij', 'user-registration' ) ),
+	'login'              => get_option( 'user_registration_label_login', __( 'Login', 'user-registration' ) ),
+	'lost_your_password' => get_option( 'user_registration_label_lost_your_password', __( 'Wachtwoord vergeten?', 'user-registration' ) ),
+);
+$placeholders = array(
+	'username' => get_option( 'user_registration_placeholder_username_or_email', '' ),
+	'password' => get_option( 'user_registration_placeholder_password', '' ),
+);
+$hide_labels  = 'yes' === get_option( 'user_registration_login_options_hide_labels', 'no' );
+
+$enable_ajax = 'yes' === get_option( 'ur_login_ajax_submission', 'no' );
 ?>
 
 <?php apply_filters( 'user_registration_login_form_before_notice', ur_print_notices() ); ?>
@@ -45,23 +59,29 @@ if ( 'bordered' === $form_template ) {
 <div class="ur-frontend-form login <?php echo $template_class; ?>" id="ur-frontend-form">
 
 	<form class="user-registration-form user-registration-form-login login" method="post">
-
 		<div class="ur-form-row">
 			<div class="ur-form-grid">
 					<?php do_action( 'user_registration_login_form_start' ); ?>
-
 					<p class="user-registration-form-row user-registration-form-row--wide form-row form-row-wide">
-						<label for="username"><?php _e( 'Username or email address', 'user-registration' ); ?> <span class="required">*</span></label>
-						<input type="text" class="user-registration-Input user-registration-Input--text input-text" name="username" id="username" value="<?php echo ( ! empty( $_POST['username'] ) ) ? esc_attr( $_POST['username'] ) : ''; ?>" />
+						<?php
+						if ( ! $hide_labels ) {
+							printf( '<label for="username">%s <span class="required">*</span></label>', esc_html( $labels['username'] ) );
+						}
+						?>
+						<input placeholder="<?php echo esc_attr( $placeholders['username'] ); ?>" type="text" class="user-registration-Input user-registration-Input--text input-text" name="username" id="username" value="<?php echo ( ! empty( $_POST['username'] ) ) ? esc_attr( $_POST['username'] ) : ''; ?>" />
 					</p>
 					<p class="user-registration-form-row user-registration-form-row--wide form-row form-row-wide<?php echo ( 'yes' === get_option( 'user_registration_login_option_hide_show_password', 'no' ) ) ? ' hide_show_password' : ''; ?>">
-						<label for="password"><?php _e( 'Password', 'user-registration' ); ?> <span class="required">*</span></label>
+						<?php
+						if ( ! $hide_labels ) {
+							printf( '<label for="password">%s <span class="required">*</span></label>', esc_html( $labels['password'] ) );
+						}
+						?>
 						<span class="password-input-group">
-						<input class="user-registration-Input user-registration-Input--text input-text" type="password" name="password" id="password" />
+						<input placeholder="<?php echo esc_attr( $placeholders['password'] ); ?>" class="user-registration-Input user-registration-Input--text input-text" type="password" name="password" id="password" />
 						<?php
 						if ( 'yes' === get_option( 'user_registration_login_option_hide_show_password', 'no' ) ) {
 							?>
-						<a href="javaScript:void(0)" class="password_preview dashicons dashicons-hidden" title="<?php echo __( 'Show password', 'user-registration' ); ?>"></a>
+						<a href="javaScript:void(0)" class="password_preview dashicons dashicons-hidden" title="<?php echo __( 'Toon wachtwoord', 'user-registration' ); ?>"></a>
 							<?php
 						}
 						?>
@@ -78,16 +98,22 @@ if ( 'bordered' === $form_template ) {
 
 					<p class="form-row">
 						<?php wp_nonce_field( 'user-registration-login', 'user-registration-login-nonce' ); ?>
-						<input type="submit" class="user-registration-Button button" name="login" value="<?php esc_attr_e( 'Login', 'user-registration' ); ?>" />
+						<div>
+							<?php if($enable_ajax) { ?>
+							<input type="submit" class="user-registration-Button button ur-submit-button" id="user_registration_ajax_login_submit" name="login" value="<?php echo esc_html( $labels['login'] ); ?>" />
+							<span></span>
+							<?php } else { ?>
+							<input type="submit" class="user-registration-Button button " name="login" value="<?php echo esc_html( $labels['login'] ); ?>" />
+							<?php } ?>
+						</div>
 						<input type="hidden" name="redirect" value="<?php echo isset( $redirect ) ? $redirect : the_permalink(); ?>" />
-
 						<?php
 							$remember_me_enabled = get_option( 'user_registration_login_options_remember_me', 'yes' );
 
 						if ( 'yes' === $remember_me_enabled ) {
 							?>
 								<label class="user-registration-form__label user-registration-form__label-for-checkbox inline">
-									<input class="user-registration-form__input user-registration-form__input-checkbox" name="rememberme" type="checkbox" id="rememberme" value="forever" /> <span><?php _e( 'Remember me', 'user-registration' ); ?></span>
+									<input class="user-registration-form__input user-registration-form__input-checkbox" name="rememberme" type="checkbox" id="rememberme" value="forever" /> <span><?php echo esc_html( $labels['remember_me'] ); ?></span>
 								</label>
 								<?php
 						}
@@ -100,13 +126,16 @@ if ( 'bordered' === $form_template ) {
 					if ( 'yes' === $lost_password_enabled ) {
 						?>
 								<p class="user-registration-LostPassword lost_password">
-									<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>"><?php _e( 'Lost your password?', 'user-registration' ); ?></a>
+									<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>"><?php echo esc_html( $labels['lost_your_password'] ); ?></a>
 								</p>
 							<?php
 					}
 					?>
 
 					<?php
+					$users_can_register = get_option( 'users_can_register', 'yes' );
+
+				if ( $users_can_register ) {
 						$url_options = get_option( 'user_registration_general_setting_registration_url_options' );
 
 					if ( ! empty( $url_options ) ) {
@@ -119,7 +148,7 @@ if ( 'bordered' === $form_template ) {
 									</a>
 								<?php
 						} else {
-							update_option( 'user_registration_general_setting_registration_label', __( 'Not a member yet? Register now.', 'user-registration' ) );
+							update_option( 'user_registration_general_setting_registration_label', __( 'Nog geen account? Register nu.', 'user-registration' ) );
 							?>
 									<a href="<?php echo get_option( 'user_registration_general_setting_registration_url_options' ); ?>"> <?php echo get_option( 'user_registration_general_setting_registration_label' ); ?>
 									</a>
@@ -127,8 +156,8 @@ if ( 'bordered' === $form_template ) {
 						}
 						echo '</p>';
 					}
+				}
 					?>
-					</p>
 					<?php do_action( 'user_registration_login_form_end' ); ?>
 			</div>
 		</div>

@@ -1,7 +1,8 @@
 <?php
 function paginate_forms($add_url, $data_url, $g_id, $questionaire_url) {
     global $wpdb;
-    $result = "";
+    $result = "<br><br>";
+    $query = "";
 
     if ($g_id == "") {
       $query = "SELECT * FROM wp_forms";
@@ -32,12 +33,14 @@ function paginate_forms($add_url, $data_url, $g_id, $questionaire_url) {
     if (!empty($conn[0]->ID)) {
       foreach ($conn as $c) {
         if (current_user_can('subscriber')) {
-          $notFilled = "";
-          $search= $wpdb->get_results( "SELECT Form_ID FROM wp_filled_forms_list WHERE User_ID = ".get_current_user_id() );
+          $filled = [];
+          $search = $wpdb->get_results( "SELECT Form_ID FROM wp_filled_forms_list WHERE User_ID = ".get_current_user_id() );
           foreach ($search as $s) {
-            $notFilled = $s->Form_ID;
+            $i = 0;
+            $filled[0] = $s->Form_ID;
+            $i++;
           }
-          if ($notFilled == "") {
+          if (!in_array($c->ID, $filled)) {
             $result .= "<tr><td>".$c->name."</td><td>".get_group_name($c->group_id)."</td><td><a href='/".$questionaire_url."?q=".$c->link."' target='_blank' >Vul formulier in</a></td></tr>";
           }
         } else {

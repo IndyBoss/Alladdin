@@ -1,3 +1,15 @@
+.has-blog-grid {
+	.blog-grid {
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-flex-wrap: wrap;
+		flex-wrap: wrap;
+		margin: 0 auto;
+		height: auto!important;
+	}
+}
+
 .blog-entry.grid-entry {
 	float: left;
 
@@ -36,7 +48,7 @@
 		    line-height: 1.2;
 		    padding-bottom: 3px;
 		    border-bottom: 1px solid;
-		    text-transform: uppercase;
+		    text-transform: capitalize;
 
 		    i {
 		    	margin-left: 5px;

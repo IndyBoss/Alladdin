@@ -38,35 +38,37 @@ class UR_Admin_Assets {
 		$screen_id      = $screen ? $screen->id : '';
 		$jquery_version = isset( $wp_scripts->registered['jquery-ui-core']->ver ) ? $wp_scripts->registered['jquery-ui-core']->ver : '1.9.2';
 
-		// Register admin styles
+		// Register admin styles.
 		wp_register_style( 'user-registration-menu', UR()->plugin_url() . '/assets/css/menu.css', array(), UR_VERSION );
 		wp_register_style( 'user-registration-form-modal-css', UR()->plugin_url() . '/assets/css/form-modal.css', array(), UR_VERSION );
 
 		wp_register_style( 'user-registration-admin', UR()->plugin_url() . '/assets/css/admin.css', array( 'nav-menus', 'wp-color-picker' ), UR_VERSION );
 		wp_register_style( 'jquery-ui-style', UR()->plugin_url() . '/assets/css/jquery-ui/jq-smoothness.css', array(), $jquery_version );
-		wp_register_style( 'flatpickr', UR()->plugin_url() . '/assets/css/flatpickr/flatpickr.min.css', '4.5.1' );
+		wp_register_style( 'flatpickr', UR()->plugin_url() . '/assets/css/flatpickr/flatpickr.min.css', array(), '4.5.1' );
 		wp_register_style( 'perfect-scrollbar', UR()->plugin_url() . '/assets/css/perfect-scrollbar/perfect-scrollbar.css', array(), '1.4.0' );
 		wp_register_style( 'sweetalert2', UR()->plugin_url() . '/assets/css/sweetalert2/sweetalert2.min.css', array(), '8.17.1' );
 
-		wp_register_style( 'user-registration-dashboard-widget', UR()->plugin_url() . '/assets/css/dashboard.css', UR_VERSION );
+		wp_register_style( 'user-registration-dashboard-widget', UR()->plugin_url() . '/assets/css/dashboard.css', array(), UR_VERSION );
 
 		wp_register_style( 'ur-review', UR()->plugin_url() . '/assets/css/review.css', array(), UR_VERSION );
 
-		// Add RTL support for admin styles
+		// Add RTL support for admin styles.
 		wp_style_add_data( 'user-registration-menu', 'rtl', 'replace' );
 		wp_style_add_data( 'user-registration-admin', 'rtl', 'replace' );
 
-		// Sitewide menu CSS
+		// Sitewide menu CSS.
 		wp_enqueue_style( 'user-registration-menu' );
 		wp_enqueue_style( 'user-registration-form-modal-css' );
 
+		wp_enqueue_style( 'select2', UR()->plugin_url() . '/assets/css/select2.css', array(), UR_VERSION );
+
 		$enqueue_review = ur_check_activation_date();
 
-		if ( $enqueue_review === true ) {
+		if ( true === $enqueue_review ) {
 			wp_enqueue_style( 'ur-review' );
 		}
 
-		// Admin styles for UR pages only
+		// Admin styles for UR pages only.
 		if ( in_array( $screen_id, ur_get_screen_ids() ) ) {
 			wp_enqueue_style( 'user-registration-admin' );
 			wp_enqueue_style( 'jquery-ui-style' );
@@ -94,7 +96,7 @@ class UR_Admin_Assets {
 		$screen_id = $screen ? $screen->id : '';
 		$suffix    = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		// Register Scripts
+		// Register Scripts.
 		wp_register_script(
 			'user-registration-admin',
 			UR()->plugin_url() . '/assets/js/admin/admin' . $suffix . '.js',
@@ -114,6 +116,7 @@ class UR_Admin_Assets {
 				'ur-enhanced-select',
 				'perfect-scrollbar',
 				'sweetalert2',
+				'user-registration-scroll-ui-js',
 			),
 			UR_VERSION
 		);
@@ -130,6 +133,8 @@ class UR_Admin_Assets {
 			UR_VERSION
 		);
 
+		wp_register_script( 'user-registration-scroll-ui-js', UR()->plugin_url() . '/assets/js/ur-components/scroll-ui.js', 'jquery' );
+
 		wp_register_script( 'user-registration-form-modal-js', UR()->plugin_url() . '/assets/js/admin/form-modal' . $suffix . '.js', 'jquery' );
 		wp_register_script( 'user-registration-dashboard-widget-js', UR()->plugin_url() . '/assets/js/admin/dashboard-widget' . $suffix . '.js', 'jquery' );
 		wp_register_script( 'selectWoo', UR()->plugin_url() . '/assets/js/selectWoo/selectWoo.full' . $suffix . '.js', array( 'jquery' ), '3.5.4' );
@@ -144,8 +149,10 @@ class UR_Admin_Assets {
 		);
 
 		wp_register_script( 'flatpickr', UR()->plugin_url() . '/assets/js/flatpickr/flatpickr.min.js', array( 'jquery' ), '1.17.0' );
+		wp_register_script( 'chartjs', UR()->plugin_url() . '/assets/js/chartjs/Chart.min.js', array( 'jquery' ), UR_VERSION );
 		wp_register_script( 'perfect-scrollbar', UR()->plugin_url() . '/assets/js/perfect-scrollbar/perfect-scrollbar.min.js', array( 'jquery' ), '1.4.0' );
 		wp_register_script( 'sweetalert2', UR()->plugin_url() . '/assets/js/sweetalert2/sweetalert2.min.js', array( 'jquery' ), '8.17.1' );
+		wp_register_script( 'ur-copy', UR()->plugin_url() . '/assets/js/admin/ur-copy' . $suffix . '.js', 'jquery' );
 		wp_register_script( 'ur-my-account', UR()->plugin_url() . '/assets/js/frontend/my-account' . $suffix . '.js', array( 'jquery' ), UR_VERSION );
 		wp_localize_script(
 			'ur-my-account',
@@ -157,9 +164,6 @@ class UR_Admin_Assets {
 			)
 		);
 
-		if ( 'user-registration_page_add-new-registration' === $screen_id ) {
-			wp_enqueue_script( 'ur-copy', UR()->plugin_url() . '/assets/js/admin/ur-copy' . $suffix . '.js', 'jquery' );
-		}
 
 		wp_enqueue_script( 'user-registration-form-modal-js' );
 
@@ -207,12 +211,13 @@ class UR_Admin_Assets {
 			);
 		}
 
-		// UserRegistration admin pages
+		// UserRegistration admin pages.
 		if ( in_array( $screen_id, ur_get_screen_ids() ) ) {
 			wp_enqueue_script( 'user-registration-admin' );
 			wp_enqueue_script( 'jquery-ui-sortable' );
 			wp_enqueue_script( 'jquery-ui-autocomplete' );
 			wp_enqueue_script( 'jquery-ui-widget' );
+			wp_enqueue_script( 'ur-copy' );
 
 			$params = array(
 				'required_form_html'             => self::get_form_required_html(),
@@ -229,9 +234,22 @@ class UR_Admin_Assets {
 				'form_one_time_draggable_fields' => ur_get_one_time_draggable_fields(),
 				'i18n_admin'                     => self::get_i18n_admin_data(),
 				'add_new'                        => esc_html( 'Add New', 'user-registratoin' ),
+				'no_file_selected'               => esc_html( 'No file selected.', 'user-registration' ),
 			);
 
 			wp_localize_script( 'user-registration-admin', 'user_registration_admin_data', $params );
+
+			wp_register_script( 'ur-components', UR()->plugin_url() . '/assets/js/ur-components/ur-components' . $suffix . '.js', array( 'jquery' ), 'UR_VERSION', true );
+			wp_enqueue_script( 'ur-components' );
+			wp_localize_script(
+				'ur-components',
+				'ur_components_script_params',
+				array(
+					'ajax_url'                  => admin_url( 'admin-ajax.php' ),
+					'card_switch_enabled_text'  => __( 'Enabled', 'user-registration' ),
+					'card_switch_disabled_text' => __( 'Disabled', 'user-registration' ),
+				)
+			);
 		}
 
 		// Enqueue flatpickr on user profile screen.
@@ -241,6 +259,9 @@ class UR_Admin_Assets {
 			wp_enqueue_script( 'ur-my-account' );
 		}
 
+		if ( 'user-registration_page_user-registration-dashboard' === $screen_id ) {
+			wp_enqueue_script( 'chartjs' );
+		}
 		// Plugins page.
 		if ( in_array( $screen_id, array( 'plugins' ) ) ) {
 			wp_register_script( 'ur-plugins', UR()->plugin_url() . '/assets/js/admin/plugins' . $suffix . '.js', array( 'jquery' ), UR_VERSION );
@@ -257,6 +278,7 @@ class UR_Admin_Assets {
 
 		wp_register_script( 'ur-live-user-notice', UR()->plugin_url() . '/assets/js/admin/live-user-notice' . $suffix . '.js', array( 'jquery', 'heartbeat' ), UR_VERSION );
 		wp_enqueue_script( 'ur-live-user-notice' );
+
 	}
 
 	/**
@@ -302,12 +324,14 @@ class UR_Admin_Assets {
 	public static function get_i18n_admin_data() {
 
 		$i18n = array(
-			'i18n_choice_ok'                         => esc_html__( 'Ok', 'user-registration' ),
+			'i18n_choice_delete'                     => esc_html__( 'Delete', 'user-registration' ),
 			'i18n_choice_cancel'                     => esc_html__( 'Cancel', 'user-registration' ),
 			'i18n_user_email'                        => _x( 'User Email', 'user-registration admin', 'user-registration' ),
 			'i18n_user_password'                     => _x( 'User Password', 'user-registration admin', 'user-registration' ),
-			'i18n_are_you_sure_want_to_delete'       => _x( 'Are you sure want to delete?', 'user registration admin', 'user-registration' ),
-			'i18n_at_least_one_row_need_to_select'   => _x( 'At least one row needs to be selected.', 'user registration admin', 'user-registration' ),
+			'i18n_are_you_sure_want_to_delete_row'   => _x( 'Are you sure want to delete this row?', 'user registration admin', 'user-registration' ),
+			'i18n_are_you_sure_want_to_delete_field' => _x( 'Are you sure want to delete this field?', 'user registration admin', 'user-registration' ),
+			'i18n_at_least_one_row_is_required_to_create_a_registration_form' => _x( 'At least one row is required to create a registration form.', 'user registration admin', 'user-registration' ),
+			'i18n_cannot_delete_row'                 => _x( 'Cannot delete row', 'user registration admin', 'user-registration' ),
 			'i18n_user_required_field_already_there' => _x( 'This field is one time draggable.', 'user registration admin', 'user-registration' ),
 			'i18n_user_required_field_already_there_could_not_clone' => _x( 'Could not clone this field.', 'user registration admin', 'user-registration' ),
 			'i18n_form_successfully_saved'           => _x( 'Form successfully saved.', 'user registration admin', 'user-registration' ),

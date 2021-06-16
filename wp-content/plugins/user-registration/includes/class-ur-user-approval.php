@@ -115,7 +115,7 @@ class UR_User_Approval {
 		$username  = isset( $user_data->user_login ) ? $user_data->user_login : '';
 		$email     = isset( $user_data->user_email ) ? $user_data->user_email : '';
 
-		UR_Emailer::status_change_email( $email, $username, $status );
+		UR_Emailer::status_change_email( $email, $username, $status, $form_id );
 	}
 
 	/**
@@ -144,9 +144,12 @@ class UR_User_Approval {
 		if ( 'admin_approval' === ur_get_single_post_meta( $form_id, 'user_registration_form_setting_login_options', get_option( 'user_registration_general_setting_login_options', 'default' ) ) ) {
 
 			$status = UR_Admin_User_Manager::PENDING;
-
 			// If the user is created by admin in the backend, than automatically approve him.
 			if ( $this->is_admin_creation_process() ) {
+				$status = UR_Admin_User_Manager::APPROVED;
+			}
+           // update user status when login using social connect
+			if ( get_user_meta( $user_id, 'user_registration_social_connect_bypass_current_password', false ) ) {
 				$status = UR_Admin_User_Manager::APPROVED;
 			}
 
@@ -162,12 +165,16 @@ class UR_User_Approval {
 	/**
 	 * Check the status of an user on login.
 	 *
-	 * @param WP_User $user Users.
+	 * @param mixed $user Users.
 	 * @param string  $password Password.
 	 *
 	 * @return \WP_Error
 	 */
-	public function check_status_on_login( WP_User $user, $password ) {
+	public function check_status_on_login( $user, $password ) {
+
+		if( ! $user instanceof WP_User ) {
+			return $user;
+		 }
 
 		$form_id = ur_get_form_id_by_userid( $user->ID );
 
@@ -201,7 +208,7 @@ class UR_User_Approval {
 			$url      = ( ! empty( $_SERVER['HTTPS'] ) ) ? 'https://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] : 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
 			$url      = substr( $url, 0, strpos( $url, '?' ) );
 			$instance = new UR_Email_Confirmation();
-			$url      = wp_nonce_url( $url . '?ur_resend_id=' . $instance->crypt_the_string( $user->ID, 'e' ) . '&ur_resend_token=true', 'ur_resend_token' );
+			$url      = wp_nonce_url( $url . '?ur_resend_id=' . $instance->crypt_the_string( $user->ID . '_' . time(), 'e' ) . '&ur_resend_token=true', 'ur_resend_token' );
 
 			if ( '0' === $status['user_status'] ) {
 				$message = '<strong>' . esc_html__( 'ERROR:', 'user-registration' ) . '</strong> ' . sprintf( __( 'Your account is still pending approval. Verify your email by clicking on the link sent to your email. %s', 'user-registration' ), '<a id="resend-email" href="' . esc_url( $url ) . '">' . __( 'Resend Verification Link', 'user-registration' ) . '</a>' );
@@ -244,7 +251,6 @@ class UR_User_Approval {
 
 			// Try to hide the not approved users from any theme or plugin request in frontend.
 			add_action( 'pre_get_users', array( $this, 'hide_not_approved_users_in_frontend' ) );
-
 			$status = ur_get_user_approval_status( get_current_user_id() );
 
 			$user_manager = new UR_Admin_User_Manager();
@@ -301,7 +307,8 @@ class UR_User_Approval {
 
 		$form_id = ur_get_form_id_by_userid( $user_id );
 
-		if ( 'admin_approval' === ur_get_single_post_meta( $form_id, 'user_registration_form_setting_login_options', get_option( 'user_registration_general_setting_login_options', 'default' ) ) ) {
+		// Check if the form is our form and the login option is admin approval.
+		if ( 0 !== $form_id && 'admin_approval' === ur_get_single_post_meta( $form_id, 'user_registration_form_setting_login_options', get_option( 'user_registration_general_setting_login_options', 'default' ) ) ) {
 			$user_manager = new UR_Admin_User_Manager( $user_id );
 
 			if ( ! $user_manager->is_approved() ) {

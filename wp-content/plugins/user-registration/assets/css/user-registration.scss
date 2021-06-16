@@ -7,15 +7,24 @@
 /**
 * Imports
 */
-@import "variables";
-@import "button";
-@import "mixins";
+@import "variables/variables";
+@import "mixins/mixins";
+
+// Components
+@import
+	'components/button',
+	'components/modal';
 
 /**
 * Utility classes
 */
 .clear {
 	clear: both;
+}
+
+.user-registration-page .select2-dropdown,
+.user-registration-swal2-container {
+	z-index: 9999;
 }
 
 /**
@@ -193,9 +202,11 @@
 			input[type="timepicker"],
 			input[type="phone"],
 			textarea,
-			select {
+			select,
+			.__PrivateStripeElement {
 				display: block;
 				width: 100%;
+				padding: 4px 8px;
 				border-radius: 0;
 				min-height: 36px;
 				margin-bottom: 10px;
@@ -203,6 +214,20 @@
 
 				&::placeholder {
 					color: #ddd;
+				}
+			}
+
+			.StripeElement {
+				padding: 4px 8px;
+				border: 1px solid $border_color;
+
+				.__PrivateStripeElement {
+					iframe {
+						// height: 20px !important;
+						position: absolute;
+						top: 50%;
+						transform: translateY(-50%);
+					}
 				}
 			}
 
@@ -351,6 +376,10 @@
 		.ur-submit-button {
 			margin-left: auto;
 		}
+	}
+
+	.user-registration-submit-Button{
+		float: right;
 	}
 
 	.ur-submit-button {
@@ -636,6 +665,9 @@
 					font-size: 14px;
 					font-family: 'sans-serif';
 					text-decoration: none;
+					border-width: 0 0 0 4px;
+					border-style: solid;
+					border-color: transparent;
 					box-shadow: 0 0 0 rgba(0,0,0,0);
 				}
 
@@ -763,7 +795,14 @@
 	margin-left: -40px;
 	float: left;
 }
-
+.user-registration-form-login{
+	.ur-front-spinner{
+		margin-left: 0;
+		float: right;
+		margin-top: 15px;
+		margin-right: 20px;
+	}
+}
 .edit-post-visual-editor {
 	.ur-gutenberg-form-selector-wrap,
 	.user-registration-gutenberg-form-selector-wrap {

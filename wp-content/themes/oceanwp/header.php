@@ -3,8 +3,9 @@
  * The Header for our theme.
  *
  * @package OceanWP WordPress theme
- */ ?>
+ */
 
+?>
 <!DOCTYPE html>
 <html class="<?php echo esc_attr( oceanwp_html_classes() ); ?>" <?php language_attributes(); ?>>
 <head>
@@ -22,7 +23,7 @@
 
 	<div id="outer-wrap" class="site clr">
 
-		<a class="skip-link screen-reader-text" href="#main"><?php esc_html_e( 'Skip to content', 'oceanwp' ); ?></a>
+		<a class="skip-link screen-reader-text" href="#main"><?php oceanwp_theme_strings( 'owp-string-header-skip-link', 'oceanwp' ); ?></a>
 
 		<?php do_action( 'ocean_before_wrap' ); ?>
 

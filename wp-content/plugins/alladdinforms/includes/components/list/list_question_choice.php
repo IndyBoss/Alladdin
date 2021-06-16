@@ -1,7 +1,8 @@
 <?php
 
 function list_question_choice($a) {
-  $result = '<form action="/'. $a .'" method="post">
+  $result = '<br><br>
+              <form action="/'. $a .'" method="post">
               <label for="question"><b>Vraag</b></label>
               <input type="text" placeholder="Vraag" name="question" required><br>';
 

@@ -69,13 +69,13 @@ class UR_Query {
 	public function get_endpoint_title( $endpoint ) {
 		switch ( $endpoint ) {
 			case 'edit-password':
-				$title = __( 'Change Password', 'user-registration' );
+				$title = __( 'Wachtwoord wijzigen', 'user-registration' );
 				break;
 			case 'edit-profile':
-				$title = __( 'Profile Details', 'user-registration' );
+				$title = __( 'Profiel gegevens', 'user-registration' );
 				break;
 			case 'ur-lost-password':
-				$title = __( 'Lost password', 'user-registration' );
+				$title = __( 'Wachtwoord vergeten', 'user-registration' );
 				break;
 			default:
 				$title = '';

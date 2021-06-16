@@ -563,12 +563,12 @@ if ( ! class_exists( 'OceanWP_WooCommerce_Config' ) ) {
 					<span class="loader-ellips__dot"></span>
 					<span class="loader-ellips__dot"></span>
 				</div>
-				<p class="scroller-status__message infinite-scroll-last"><?php echo esc_attr( $last ); ?></p>
-				<p class="scroller-status__message infinite-scroll-error"><?php echo esc_attr( $error ); ?></p>
+				<p class="scroller-status__message infinite-scroll-last"><?php echo esc_html( $last ); ?></p>
+				<p class="scroller-status__message infinite-scroll-error"><?php echo esc_html( $error ); ?></p>
 			</div>
 			<div class="infinite-scroll-nav clr">
-				<div class="alignleft newer-posts"><?php echo get_previous_posts_link('&larr; '. esc_html__( 'Newer Posts', 'oceanwp' ) ); ?></div>
-				<div class="alignright older-posts"><?php echo get_next_posts_link( esc_html__( 'Older Posts', 'oceanwp' ) .' &rarr;', $wp_query->max_num_pages ); ?></div>
+				<div class="alignleft newer-posts"><?php echo get_previous_posts_link('&larr; ' . esc_html__( 'Newer Posts', 'oceanwp' ) ); ?></div>
+				<div class="alignright older-posts"><?php echo get_next_posts_link( esc_html__( 'Older Posts', 'oceanwp' ) . ' &rarr;', $wp_query->max_num_pages ); ?></div>
 			</div>
 		<?php
 		}
@@ -645,7 +645,7 @@ if ( ! class_exists( 'OceanWP_WooCommerce_Config' ) ) {
 
 			// Return
  			return $classes;
-			
+
 		}
 
 		/**
@@ -1142,9 +1142,9 @@ if ( ! class_exists( 'OceanWP_WooCommerce_Config' ) ) {
 		public static function quick_view_button() {
 			global $product;
 
-			$button  = '<a href="#" id="product_id_' . $product->get_id() . '" class="owp-quick-view" data-product_id="' . $product->get_id() . '"><i class="icon-eye" aria-hidden="true"></i>' . esc_html__( 'Quick View', 'oceanwp' ) . '</a>';
+			$button  = '<a href="#" id="product_id_' . $product->get_id() . '" class="owp-quick-view" data-product_id="' . $product->get_id() . '"><i class="icon-eye" aria-hidden="true"></i>' . oceanwp_theme_strings( 'owp-string-woo-quick-view-text', false, 'oceanwp' ) . '</a>';
 
-			echo apply_filters( 'ocean_woo_quick_view_button_html', $button );
+			echo apply_filters( 'ocean_woo_quick_view_button_html', $button ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		/**
@@ -1234,7 +1234,7 @@ if ( ! class_exists( 'OceanWP_WooCommerce_Config' ) ) {
 			        if ( is_a( $next_post , 'WP_Post' ) ) { ?>
 						<li class="next-li">
 							<a href="<?php echo get_the_permalink( $next_post->ID ); ?>" class="owp-nav-link next" rel="next"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
-							<a href="<?php echo get_the_permalink( $next_post->ID ); ?>" class="owp-nav-text next-text"><?php echo esc_attr( $next_text ); ?></a>
+							<a href="<?php echo get_the_permalink( $next_post->ID ); ?>" class="owp-nav-text next-text"><?php echo esc_html( $next_text ); ?></a>
 							<div class="owp-nav-thumb">
 								<a title="<?php echo get_the_title( $next_post->ID ); ?>" href="<?php echo get_the_permalink( $next_post->ID ); ?>"><?php echo get_the_post_thumbnail( $next_post->ID, apply_filters( 'single_product_small_thumbnail_size', 'shop_thumbnail' ) ); ?></a>
 							</div>
@@ -1244,7 +1244,7 @@ if ( ! class_exists( 'OceanWP_WooCommerce_Config' ) ) {
 
 					if ( is_a( $prev_post , 'WP_Post' ) ) { ?>
 						<li class="prev-li">
-							<a href="<?php echo get_the_permalink( $prev_post->ID ); ?>" class="owp-nav-text prev-text"><?php echo esc_attr( $prev_text ); ?></a>
+							<a href="<?php echo get_the_permalink( $prev_post->ID ); ?>" class="owp-nav-text prev-text"><?php echo esc_html( $prev_text ); ?></a>
 							<a href="<?php echo get_the_permalink( $prev_post->ID ); ?>" class="owp-nav-link prev" rel="next"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
 							<div class="owp-nav-thumb">
 								<a title="<?php echo get_the_title( $prev_post->ID ); ?>" href="<?php echo get_the_permalink( $prev_post->ID ); ?>"><?php echo get_the_post_thumbnail( $prev_post->ID, apply_filters( 'single_product_small_thumbnail_size', 'shop_thumbnail' ) ); ?></a>
@@ -1270,17 +1270,15 @@ if ( ! class_exists( 'OceanWP_WooCommerce_Config' ) ) {
 				return;
 			}
 
-			// Get product object
+			// Get product object.
 			$product = wc_get_product( get_the_ID() );
 
-			// Select options text
-			$text = esc_html__( 'Select Options', 'oceanwp' );
-			$text = apply_filters( 'ocean_floating_bar_select_text', $text ); ?>
+			?>
 
 			<div class="owp-floating-bar">
 				<div class="container clr">
 					<div class="left">
-				        <p class="selected"><?php esc_html_e( 'Selected:', 'oceanwp' ); ?></p>
+				        <p class="selected"><?php oceanwp_theme_strings( 'owp-string-woo-floating-bar-selected', 'oceanwp' ); ?></p>
 				        <h2 class="entry-title" itemprop="name"><?php echo $product->get_title(); ?></h2>
 				    </div>
 					<div class="right">
@@ -1288,14 +1286,14 @@ if ( ! class_exists( 'OceanWP_WooCommerce_Config' ) ) {
 				        	<p class="price"><?php echo $product->get_price_html(); ?></p>
 		                </div>
 		                <?php
-		                // If out of stock
+		                // If out of stock.
 		                if ( 'outofstock' == $product->get_stock_status() ) { ?>
-		                	<p class="stock out-of-stock"><?php esc_html_e( 'Out of stock', 'oceanwp' ); ?></p>
+		                	<p class="stock out-of-stock"><?php oceanwp_theme_strings( 'owp-string-woo-floating-bar-out-stock', 'oceanwp' ); ?></p>
 		            	<?php
 		            	} else if ( $product && $product->is_type( 'simple' ) && $product->is_purchasable() && $product->is_in_stock() && ! $product->is_sold_individually() ) {
 		                	echo self::floating_bar_add_to_cart( $product );
 		            	} else { ?>
-		                	<button type="submit" class="button top"><?php echo esc_attr( $text ); ?></button>
+		                	<button type="submit" class="button top"><?php oceanwp_theme_strings( 'owp-string-woo-floating-bar-select-btn', 'oceanwp' ); ?></button>
 		                <?php
 		            	} ?>
 				    </div>
@@ -1313,7 +1311,15 @@ if ( ! class_exists( 'OceanWP_WooCommerce_Config' ) ) {
 		public static function floating_bar_add_to_cart( $product ) {
 
 			$html = '<form action="' . esc_url( $product->add_to_cart_url() ) . '" class="cart" method="post" enctype="multipart/form-data">';
-			$html .= woocommerce_quantity_input( array(), $product, false );
+			$html .= woocommerce_quantity_input(
+				array(
+					'min_value'   => apply_filters( 'woocommerce_quantity_input_min', $product->get_min_purchase_quantity(), $product ),
+					'max_value'   => apply_filters( 'woocommerce_quantity_input_max', $product->get_max_purchase_quantity(), $product ),
+					'input_value' => isset( $_POST['quantity'] ) ? wc_stock_amount( wp_unslash( $_POST['quantity'] ) ) : $product->get_min_purchase_quantity(), // WPCS: CSRF ok, input var ok.
+				),
+				$product,
+				false
+			);
 			$html .= '<button type="submit" name="add-to-cart" value="' . get_the_ID() . '" class="floating_add_to_cart_button button alt">' . esc_html( $product->add_to_cart_text() ) . '</button>';
 			$html .= '</form>';
 

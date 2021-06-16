@@ -52,8 +52,9 @@ abstract class UR_Field_Settings {
 
 		foreach ( $fields as $field_key => $field ) {
 
+			$tooltip_html       = ! empty( $field['tip'] ) ? ur_help_tip( $field['tip'], false, 'ur-portal-tooltip' ) : '';
 			$this->fields_html .= '<div class="ur-advance-setting ur-advance-' . esc_attr( $field_key ) . '">';
-			$this->fields_html .= '<label for="' . esc_attr( $field['class'] ) . '">' . ( isset( $field['label'] ) ? esc_attr( $field['label'] ) : '' ) . '</label>';
+			$this->fields_html .= '<label for="' . esc_attr( $field['class'] ) . '">' . ( isset( $field['label'] ) ? esc_attr( $field['label'] ) : '' ) . $tooltip_html . '</label>';
 
 			$value = $this->get_advance_setting_data( $field_key ) == '' ? $field['default'] : $this->get_advance_setting_data( $field_key );
 
@@ -70,13 +71,12 @@ abstract class UR_Field_Settings {
 					break;
 
 				case 'select':
-					$this->fields_html .= '<select data-advance-field="' . esc_attr( $field_key ) . '" class="' . esc_attr( $field['class'] ) . '" data-id="' . ( isset( $field['data-id'] ) ? esc_attr( $field['data-id'] ) : '' ) . '"';
+					$is_multiple = isset( $field['multiple'] ) && true === $field['multiple'];
+					$this->fields_html .= '<select data-advance-field="' . esc_attr( $field_key ) . '" class="' . esc_attr( $field['class'] ) . '" data-id="' . ( isset( $field['data-id'] ) ? esc_attr( $field['data-id'] ) : '' ) . '" name="' . esc_attr( $field['name'] ) .  esc_attr( $is_multiple ? '[]' : '' ) . '"';
 
 					if ( true == $field['required'] ) {
 						$this->fields_html .= ' required ';
 					}
-
-					$is_multiple = isset( $field['multiple'] ) && true === $field['multiple'];
 
 					if ( true === $is_multiple ) {
 						$this->fields_html .= ' multiple ';
@@ -90,7 +90,7 @@ abstract class UR_Field_Settings {
 						$selected_value = '';
 
 						if ( true === $is_multiple && is_array( $value ) ) {
-							$selected_value = in_array ( $option_key, $value, true ) ? 'selected="selected"' : '';
+							$selected_value = in_array( $option_key, $value, true ) ? 'selected="selected"' : '';
 						} else {
 							$selected_value = ( $value === $option_key ) ? 'selected="selected"' : '';
 						}

@@ -5,9 +5,12 @@ function add_form( $atts ) {
   $add_url = esc_attr($a['add_url']);
   $view_url = esc_attr($a['view_url']);
   $questions_url = esc_attr($a['questions_url']);
-  $g_id = get_groupid();
+  $g_id = "";
+  if (!current_user_can('subscriber')) {
+    $g_id = get_groupid();
+  }
   $form_gid = get_form_group_id();
-  $result = '';
+  $result = '<br><br>';
 
 
   // ALERTS ON PAGE

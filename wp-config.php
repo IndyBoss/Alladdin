@@ -23,7 +23,7 @@
 define( 'DB_NAME', 'alladdin' );
 
 /** MySQL database username */
-define( 'DB_USER', 'Alladdin' );
+define( 'DB_USER', 'alladdin' );
 
 /** MySQL database password */
 define( 'DB_PASSWORD', '' );
@@ -32,7 +32,7 @@ define( 'DB_PASSWORD', '' );
 define( 'DB_HOST', 'localhost' );
 
 /** Database Charset to use in creating database tables. */
-define( 'DB_CHARSET', 'utf8mb4' );
+define( 'DB_CHARSET', 'utf8' );
 
 /** The Database Collate type. Don't change this if in doubt. */
 define( 'DB_COLLATE', '' );
@@ -46,14 +46,14 @@ define( 'DB_COLLATE', '' );
  *
  * @since 2.6.0
  */
-define( 'AUTH_KEY',         'K1vLwx?~~[2]?:*qM 0}SK5cVg,=s?wb17kQWW}wxKo@#S2K/Wiwi;pLHv9Rq8$m' );
-define( 'SECURE_AUTH_KEY',  '2=GsAw^NM4L0gjC2V&&6m.Q|6y2q {.&!%^@2s,YDN)fks@p`eyo80v%Rg9 Lwr9' );
-define( 'LOGGED_IN_KEY',    'B~fd8&m=-&d@l=_&MYwI@XMPL~He<qW%li%,b<zfpF?ZhTzs/C,&?k~Au4-WI-Rk' );
-define( 'NONCE_KEY',        '.?eYE],1n^#lX$>x(y[5F1}t`AAne7Du`_5No6=`])ljRYw~&_rZ!p!17HY%)^zM' );
-define( 'AUTH_SALT',        'cN>,*{dKYkRR}QMIfjgY62twS{v/:(^NbP.C[{l[Y_K+-S(UW>yaB%gBC(R@0b,s' );
-define( 'SECURE_AUTH_SALT', 'anXb.#VGDBCyLj$1s<NYtr@/.E|n^)ruz36c_>k26ZWN4vuE3>KT076-0T_i#<fC' );
-define( 'LOGGED_IN_SALT',   '3sxhAdR4QLj(L>m@5Y50[O/`w#HxzC.a{>cAI3}?p{Oi~`5,yqbKg[]<_mHDl9y0' );
-define( 'NONCE_SALT',       ' {vP;uXS#esw~nDf?*IBaK2}>joRD?y,[G!7:U6>b``~6Y*ZQKGOB=O8Zwj+_%Cv' );
+define( 'AUTH_KEY',         'Hh=K74yB1)A5EmCwVYFv' );
+define( 'SECURE_AUTH_KEY',  'PQN7 V5b6/bwjI@7XA4B' );
+define( 'LOGGED_IN_KEY',    '77c= #1*jvrz$JX33H=@' );
+define( 'NONCE_KEY',        'nb_@ZMB$L_G$dNc_w)wZ' );
+define( 'AUTH_SALT',        'kwURR)8$jK_UApgf@_m_' );
+define( 'SECURE_AUTH_SALT', 's@sE=r7U8m3)dL%HxLb3' );
+define( 'LOGGED_IN_SALT',   'HIK(IB=DA+wW95xH*4Um' );
+define( 'NONCE_SALT',       'DN!R#p #KyV/XsV#CqLS' );
 
 /**#@-*/
 
@@ -78,6 +78,13 @@ $table_prefix = 'wp_';
  * @link https://wordpress.org/support/article/debugging-in-wordpress/
  */
 define( 'WP_DEBUG', false );
+define( 'WP_DEBUG_LOG', false );
+//define( 'WP_CACHE', true );
+require_once( dirname( __FILE__ ) . '/gd-config.php' );
+define( 'FS_METHOD', 'direct' );
+define( 'FS_CHMOD_DIR', (0705 & ~ umask()) );
+define( 'FS_CHMOD_FILE', (0604 & ~ umask()) );
+
 
 /* That's all, stop editing! Happy publishing. */
 

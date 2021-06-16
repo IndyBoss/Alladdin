@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <h2>
 	<?php
 	printf(
-		__( 'Welcome, %1$s', 'user-registration' ),
+		__( 'Welkom, %1$s', 'user-registration' ),
 		esc_html( $current_user->display_name )
 	);
 	?>
@@ -38,8 +38,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 			$gravatar_image      = get_avatar_url( get_current_user_id(), $args = null );
 			$profile_picture_url = get_user_meta( get_current_user_id(), 'user_registration_profile_pic_url', true );
 			$image               = ( ! empty( $profile_picture_url ) ) ? $profile_picture_url : $gravatar_image;
-		?>
-		<img class="profile-preview" alt="profile-picture" src="<?php echo $image; ?>">
+
+			if( 'no' === get_option( 'user_registration_disable_profile_picture', 'no' ) ) {
+
+			?>
+				<img class="profile-preview" alt="profile-picture" src="<?php echo $image; ?>">
+			<?php } ?>
+
 	</div>
 	<header>
 		<?php
@@ -73,7 +78,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php
 	/* translators: 1 profile details url, 2: change password url */
 	printf(
-		__( 'From your account dashboard you can edit your <a href="%1$s"> profile details</a> and <a href="%2$s">edit your password</a>.', 'user-registration' ),
+		__( 'Vanuit je dashboard kan je je <a href="%1$s"> gegevens bewerken</a> and <a href="%2$s">wachtwoord wijzigen</a>.', 'user-registration' ),
 		esc_url( ur_get_endpoint_url( 'edit-profile' ) ),
 		esc_url( ur_get_endpoint_url( 'edit-password' ) )
 	);
@@ -84,7 +89,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 		/* translators: 1: user display name 2: logout url */
 		printf(
-			__( 'Not %1$s? <a href="%2$s">Sign out</a>', 'user-registration' ),
+			__( 'Niet %1$s? <a href="%2$s">Log uit</a>', 'user-registration' ),
 			'<strong>' . esc_html( $current_user->display_name ) . '</strong>',
 			esc_url( ur_logout_url( ur_get_page_permalink( 'myaccount' ) ) )
 		);

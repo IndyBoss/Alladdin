@@ -50,10 +50,10 @@ function ur_login_error_message( $error ) {
 	// Its the correct username with incorrect password.
 	if ( is_int( $pos ) && isset( $_POST['username'] ) ) {
 
-		$error = sprintf( '<strong>' . __( 'ERROR:', 'user-registration' ) . '</strong>' . __( 'The password you entered for username %1$1s is incorrect. %2$2s', 'user-registration' ), $_POST['username'], "<a href='" . esc_url( wp_lostpassword_url() ) . "'>" . __( 'Lost Your Password?', 'user-registration' ) . '</a>' );
+		$error = sprintf( '<strong>' . __( 'ERROR:', 'user-registration' ) . '</strong>' . __( 'The password you entered for username %1$1s is incorrect. %2$2s', 'user-registration' ), $_POST['username'], "<a href='" . esc_url( wp_lostpassword_url() ) . "'>" . __( 'Wachtwoord vergeten?', 'user-registration' ) . '</a>' );
 	} // It's invalid username.
 	elseif ( is_int( $pos2 ) && isset( $_POST['username'] ) ) {
-		$error = sprintf( '<strong>' . __( 'ERROR:', 'user-registration' ) . '</strong>' . __( 'Invalid username. %1s', 'user-registration' ), "<a href='" . esc_url( wp_lostpassword_url() ) . "'>" . __( 'Lost Your Password?', 'user-registration' ) . '</a>' );
+		$error = sprintf( '<strong>' . __( 'ERROR:', 'user-registration' ) . '</strong>' . __( 'Invalid username. %1s', 'user-registration' ), "<a href='" . esc_url( wp_lostpassword_url() ) . "'>" . __( 'Wachtwoord vergeten?', 'user-registration' ) . '</a>' );
 	}
 
 	return $error;
@@ -78,7 +78,8 @@ function ur_lostpassword_url( $default_url = '' ) {
 		return $default_url;
 	}
 
-	$ur_account_page_url    = ur_get_page_permalink( 'myaccount' );
+	$ur_account_page_url = ur_get_page_permalink( 'myaccount' );
+
 	$ur_account_page_exists = ur_get_page_id( 'myaccount' ) > 0;
 	$lost_password_endpoint = get_option( 'user_registration_myaccount_lost_password_endpoint', 'lost-password' );
 
@@ -105,13 +106,13 @@ function ur_get_account_menu_items() {
 
 	$items = array(
 		'dashboard'     => __( 'Dashboard', 'user-registration' ),
-		'edit-profile'  => __( 'Profile Details', 'user-registration' ),
-		'edit-password' => __( 'Change Password', 'user-registration' ),
-		'user-logout'   => __( 'Logout', 'user-registration' ),
+		'edit-profile'  => __( 'Profiel gegevens', 'user-registration' ),
+		'edit-password' => __( 'Wachtwoord wijzigen', 'user-registration' ),
+		'user-logout'   => __( 'log uit', 'user-registration' ),
 	);
 
 	$user_id = get_current_user_id();
-	$form_id       = ur_get_form_id_by_userid( $user_id );
+	$form_id = ur_get_form_id_by_userid( $user_id );
 
 	$profile = user_registration_form_data( $user_id, $form_id );
 

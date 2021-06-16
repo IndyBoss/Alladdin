@@ -30,7 +30,7 @@ class UR_Admin {
 		add_action( 'admin_notices', array( $this, 'review_notice' ) );
 		add_action( 'admin_footer', 'ur_print_js', 25 );
 		add_filter( 'heartbeat_received', array( $this, 'new_user_live_notice' ), 10, 2 );
-
+		add_filter( 'admin_body_class', array( $this, 'user_registration_add_body_classes' ) );
 	}
 
 	/**
@@ -109,6 +109,7 @@ class UR_Admin {
 		$current_screen = get_current_screen();
 		$ur_pages       = ur_get_screen_ids();
 
+		
 		// Set only UR pages.
 		$ur_pages = array_diff( $ur_pages, array( 'profile', 'user-edit' ) );
 
@@ -124,7 +125,7 @@ class UR_Admin {
 				);
 				ur_enqueue_js(
 					"
-				jQuery( 'a.ur-rating-link' ).click( function() {
+				jQuery( 'a.ur-rating-link' ).on('click', function() {
 						jQuery.post( '" . UR()->ajax_url() . "', { action: 'user_registration_rated' } );
 						jQuery( this ).parent().text( jQuery( this ).data( 'rated' ) );
 					});
@@ -154,7 +155,7 @@ class UR_Admin {
 		$notice_dismissed = get_option( 'user_registration_review_notice_dismissed', 'no' );
 
 		if ( 'yes' == $notice_dismissed ) {
-			return;
+		 	return;
 		}
 
 		// Return if activation date is less than 30 days.
@@ -165,17 +166,21 @@ class UR_Admin {
 		?>
 			<div id="user-registration-review-notice" class="notice notice-info user-registration-review-notice">
 				<div class="user-registration-review-thumbnail">
-					<img src="<?php echo UR()->plugin_url() . '/assets/images/logo.png'; ?>" alt="">
+					<img src="<?php echo UR()->plugin_url() . '/assets/images/UR-Logo.png'; ?>" alt="">
 				</div>
 				<div class="user-registration-review-text">
 
-						<h3><?php _e( 'Enjoying <strong>User Registration</strong>?', 'user-registration' ); ?></h3>
-						<p><?php _e( 'Looks like you have been using user registration for a while. Would you do us some favour and leave a review on <a href="https://wordpress.org/support/plugin/user-registration/reviews/#new-post" target="_blank"><strong>WordPress.org</strong></a>?', 'user-registration' ); ?></p>
+						<h3><?php _e( 'HAKUNA <strong>MATATA!</strong>', 'user-registration' ); ?></h3>
+						<P><?php _e( '( The above word is just to draw your attention. <span class="dashicons dashicons-smiley smile-icon"></span> )', 'user-registration' ); ?> </P>
+						<p><?php _e( 'Hope you are having nice experience with <strong>User Registration</strong> plugin. Please provide this plugin a nice review.', 'user-registration' ); ?></p> 
+						<p class="extra-pad"><?php _e('<strong>What benefit would you have?</strong> <br>
+				Basically, it would encourage us to release updates regularly with new features & bug fixes so that you can keep on using the plugin without any issues and also to provide free support like we have been doing. <span class="dashicons dashicons-smiley smile-icon"></span><br>', 'user-registration' ); ?></p>
 
 					<ul class="user-registration-review-ul">
 						<li><a class="button button-primary" href="https://wordpress.org/support/plugin/user-registration/reviews/#postform" target="_blank"><span class="dashicons dashicons-external"></span><?php _e( 'Sure, I\'d love to!', 'user-registration' ); ?></a></li>
 						<li><a href="#" class="button button-secondary notice-dismiss"><span  class="dashicons dashicons-smiley"></span><?php _e( 'I already did!', 'user-registration' ); ?></a></li>
-						<li><a href="#" class="button button-link notice-dismiss"><span class="dashicons dashicons-dismiss"></span><?php _e( 'Never show again', 'user-registration' ); ?></a></li>
+						<li><a href="#" class="button button-secondary notice-dismiss"><span class="dashicons dashicons-dismiss"></span><?php _e( 'Never show again', 'user-registration' ); ?></a></li>
+						<li><a href="https://wpeverest.com/support-forum/" class="button button-secondary notice-have-query"><span class="dashicons dashicons-testimonial"></span><?php _e( 'I have a query', 'user-registration' ); ?></a></li>
 					 </ul>
 				</div>
 			</div>
@@ -189,6 +194,7 @@ class UR_Admin {
 		$now = current_time( 'mysql' );
 		update_option( 'user_registration_users_listing_viewed', $now );
 	}
+
 	/**
 	 * Check for new user by read time.
 	 *
@@ -224,6 +230,21 @@ class UR_Admin {
 		$response['user_registration_new_user_message'] = sprintf( __( '%1$d new %2$s registered.', 'user-registration' ), $user_count, _n( 'User', 'Users', $user_count, 'user-registration' ) );
 		$response['user_registration_new_user_count']   = $user_count;
 		return $response;
+	}
+
+	/**
+	 * Add user-registration class to body in admin.
+	 *
+	 * @param string $classes Class to add to body.
+	 */
+	public function user_registration_add_body_classes( $classes ) {
+		global $current_screen;
+
+		// Check if the screen contains user-registration_page_ as prefix inorder to make sure the page is user registration plugin's page.
+		if ( strpos( $current_screen->id, 'user-registration_page_' ) !== false ) {
+			$classes = 'user-registration';
+		};
+		return $classes;
 	}
 }
 

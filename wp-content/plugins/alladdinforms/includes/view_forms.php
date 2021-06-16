@@ -5,10 +5,13 @@ function view_forms( $atts ) {
 		$add_url = esc_attr($a['add_url']);
 		$questionaire_url = esc_attr($a['questionaire_url']);
 		$data_url =  esc_attr($a['data_url']);
-	  $g_id = get_groupid();
+		$g_id = "";
+		if (!current_user_can('subscriber')) {
+			$g_id = get_groupid();
+		}
+
 		global $wpdb;
 		$result = '';
-
 		$result .= get_alerts();
 
 		if (isset($_POST['method'])) {

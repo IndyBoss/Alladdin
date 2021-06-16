@@ -101,7 +101,10 @@ abstract class UR_Form_Field {
 		ob_start();
 		$template_path       = str_replace( '_', '-', str_replace( 'user_registration_', 'admin-', $this->id ) );
 		$admin_template_path = apply_filters( $this->id . '_admin_template', UR_FORM_PATH . 'views' . UR_DS . 'admin' . UR_DS . $template_path . '.php' );
-		include $admin_template_path;
+
+		if ( file_exists( $admin_template_path ) ) {
+			include $admin_template_path;
+		}
 		$template = ob_get_clean();
 
 		$settings = $this->get_setting();
@@ -120,9 +123,10 @@ abstract class UR_Form_Field {
 	 */
 	public function frontend_includes( $data = array(), $form_id, $field_type, $field_key ) {
 
-		$this->form_id     = $form_id;
-		$form_data         = (array) $data['general_setting'];
-		$form_data['type'] = $field_type;
+		$this->form_id        = $form_id;
+		$form_data            = (array) $data['general_setting'];
+		$form_data['form_id'] = $form_id;
+		$form_data['type']    = $field_type;
 
 		if ( isset( $form_data['hide_label'] ) && 'yes' === $form_data['hide_label'] ) {
 			unset( $form_data['label'] );
@@ -150,12 +154,24 @@ abstract class UR_Form_Field {
 			$form_data['max'] = $data['advance_setting']->max;
 		}
 
+		if ( isset( $data['advance_setting']->step ) ) {
+			$form_data['step'] = $data['advance_setting']->step;
+		}
+
 		if ( isset( $data['advance_setting']->default_value ) ) {
 			$form_data['default'] = $data['advance_setting']->default_value;
 		}
 
 		if ( isset( $data['general_setting']->max_files ) ) {
 			$form_data['max_files'] = $data['general_setting']->max_files;
+		}
+
+		if ( isset( $data['advance_setting']->max_upload_size ) ) {
+			$form_data['max_upload_size'] = $data['advance_setting']->max_upload_size;
+		}
+
+		if ( isset( $data['advance_setting']->valid_file_type ) ) {
+			$form_data['valid_file_type'] = $data['advance_setting']->valid_file_type;
 		}
 
 		$form_data['input_class'] = array( 'ur-frontend-field ' );
@@ -172,12 +188,12 @@ abstract class UR_Form_Field {
 		if ( isset( $data['advance_setting']->enable_min_max ) && 'true' === $data['advance_setting']->enable_min_max ) {
 			if ( isset( $data['advance_setting']->min_date ) ) {
 				$min_date                                        = str_replace( '/', '-', $data['advance_setting']->min_date );
-				$form_data['custom_attributes']['data-min-date'] = '' !== $min_date ? date( $data['advance_setting']->date_format, strtotime( $min_date ) ) : '';
+				$form_data['custom_attributes']['data-min-date'] = '' !== $min_date ? date_i18n( $data['advance_setting']->date_format, strtotime( $min_date ) ) : '';
 			}
 
 			if ( isset( $data['advance_setting']->max_date ) ) {
 				$max_date                                        = str_replace( '/', '-', $data['advance_setting']->max_date );
-				$form_data['custom_attributes']['data-max-date'] = '' !== $max_date ? date( $data['advance_setting']->date_format, strtotime( $max_date ) ) : '';
+				$form_data['custom_attributes']['data-max-date'] = '' !== $max_date ? date_i18n( $data['advance_setting']->date_format, strtotime( $max_date ) ) : '';
 			}
 		}
 
@@ -231,6 +247,10 @@ abstract class UR_Form_Field {
 
 				$form_data['options'] = $options;
 			}
+
+			if( 'multi_select2' === $field_key ){
+				$form_data['choice_limit'] =  isset( $data['advance_setting']->choice_limit ) ?  $data['advance_setting']->choice_limit : "";
+			}
 		}
 
 		if ( 'radio' === $field_key ) {
@@ -259,6 +279,36 @@ abstract class UR_Form_Field {
 
 				$form_data['options'] = $options;
 			}
+
+			$form_data['choice_limit'] =  isset( $data['advance_setting']->choice_limit ) ?  $data['advance_setting']->choice_limit : "";
+		}
+
+		if( "user_login" === $field_key ) {
+			$form_data['username_length'] = isset( $data['advance_setting']->username_length ) ? $data['advance_setting']->username_length : "";
+
+			$form_data['username_character'] = isset( $data['advance_setting']->username_character ) ? $data['advance_setting']->username_character : "";
+		}
+
+		if( 'range' === $field_key ) {
+			$form_data['range_min'] =  ( isset( $data['advance_setting']->range_min) && "" !== $data['advance_setting']->range_min) ? $data['advance_setting']->range_min : "0";
+			$form_data['range_max'] =  ( isset( $data['advance_setting']->range_max)  && "" !== $data['advance_setting']->range_max ) ? $data['advance_setting']->range_max : "10";
+			$form_data['range_step'] =  isset( $data['advance_setting']->range_step) ? $data['advance_setting']->range_step : "";
+			$enable_prefix_postfix = isset( $data['advance_setting']->enable_prefix_postfix) ? $data['advance_setting']->enable_prefix_postfix : "false";
+			$enable_text_prefix_postfix = isset( $data['advance_setting']->enable_text_prefix_postfix) ? $data['advance_setting']->enable_text_prefix_postfix : "false";
+			$form_data['enable_payment_slider'] = isset( $data['advance_setting']->enable_payment_slider ) ? $data['advance_setting']->enable_payment_slider : "false";
+
+			if( "true" === $enable_prefix_postfix ) {
+
+				if( "true" === $enable_text_prefix_postfix ) {
+					$form_data['range_prefix'] = isset( $data['advance_setting']->range_prefix) ? $data['advance_setting']->range_prefix : "";
+					$form_data['range_postfix'] = isset( $data['advance_setting']->range_postfix) ? $data['advance_setting']->range_postfix : "";
+				} else {
+
+					$form_data['range_prefix'] = $form_data['range_min'];
+					$form_data['range_postfix'] = $form_data['range_max'];
+				}
+			}
+
 		}
 		/** Redundant Codes End. */
 
@@ -298,8 +348,9 @@ abstract class UR_Form_Field {
 			$file_path       = isset( $file_path_array['file_path'] ) ? $file_path_array['file_path'] : $file_path;
 
 			if ( file_exists( $file_path ) ) {
-				$advance_setting_instance = include_once $file_path;
-				return $advance_setting_instance->output( $this->admin_data );
+				include_once $file_path;
+				$instance = new $class_name();
+				return $instance->output( $this->admin_data );
 			}
 		} else {
 
@@ -320,8 +371,9 @@ abstract class UR_Form_Field {
 		$general_setting_html = '';
 
 		foreach ( $general_settings as $setting_key => $setting_value ) {
+			$tooltip_html             = ! empty( $setting_value['tip'] ) ? ur_help_tip( $setting_value['tip'], false, 'ur-portal-tooltip' ) : '';
 			$general_setting_wrapper  = '<div class="ur-general-setting ur-setting-' . $setting_value['type'] . ' ur-general-setting-' . str_replace( ' ', '-', strtolower( $setting_value['label'] ) ) . '">';
-			$general_setting_wrapper .= '<label for="ur-type-' . $setting_value['type'] . '">' . $setting_value['label'] . '</label>';
+			$general_setting_wrapper .= '<label for="ur-type-' . $setting_value['type'] . '">' . $setting_value['label'] . $tooltip_html . '</label>';
 			$sub_string_key           = substr( $this->id, strlen( 'user_registration_' ), 5 );
 			$strip_prefix             = substr( $this->id, 18 );
 
@@ -336,7 +388,7 @@ abstract class UR_Form_Field {
 					}
 					$disabled = '';
 					// To make invite code field name non editable.
-					if ( 'invite_code' === $value || 'profile_pic_url' === $value ) {
+					if ( 'learndash_course' === $value || 'invite_code' === $value || 'profile_pic_url' === $value ) {
 						$disabled = 'disabled';
 					}
 					$general_setting_wrapper .= $extra_attribute . ' ' . $disabled . '/>';

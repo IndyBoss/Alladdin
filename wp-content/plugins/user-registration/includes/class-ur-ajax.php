@@ -36,15 +36,17 @@ class UR_AJAX {
 	 */
 	public static function add_ajax_events() {
 		$ajax_events = array(
-
-			'user_input_dropped'    => true,
-			'form_save_action'      => true,
-			'user_form_submit'      => true,
-			'deactivation_notice'   => false,
-			'rated'                 => false,
-			'dashboard_widget'      => false,
-			'dismiss_review_notice' => false,
-			'import_form_action'    => false,
+			'user_input_dropped'     => true,
+			'form_save_action'       => true,
+			'user_form_submit'       => true,
+			'update_profile_details' => true,
+			'profile_pic_upload'     => true,
+			'ajax_login_submit'		 =>	true,
+			'deactivation_notice'    => false,
+			'rated'                  => false,
+			'dashboard_widget'       => false,
+			'dismiss_review_notice'  => false,
+			'import_form_action'     => false,
 		);
 
 		foreach ( $ajax_events as $ajax_event => $nopriv ) {
@@ -157,6 +159,374 @@ class UR_AJAX {
 		UR_Frontend_Form_Handler::handle_form( $form_data, $form_id );
 	}
 
+
+	/**
+	 * Get Post data on frontend form submit
+	 *
+	 * @return void
+	 */
+	public static function update_profile_details() {
+
+		if ( ! check_ajax_referer( 'user_registration_profile_details_save_nonce', 'security', false ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Nonce error, please reload.', 'user-registration' ),
+				)
+			);
+		}
+
+		// Current user id.
+		$user_id = get_current_user_id();
+
+		if ( $user_id <= 0 ) {
+			return;
+		}
+
+		// Get form id of the form from which current user is registered.
+		$form_id_array = get_user_meta( $user_id, 'ur_form_id' );
+		$form_id       = 0;
+
+		if ( isset( $form_id_array[0] ) ) {
+			$form_id = $form_id_array[0];
+		}
+
+		// Make the schema of form data compatible with processing below.
+		$form_data    = array();
+		$single_field = array();
+
+		if ( isset( $_POST['form_data'] ) ) {
+			$form_data = json_decode( stripslashes( $_POST['form_data'] ) );
+			foreach ( $form_data as $data ) {
+				$single_field[ $data->field_name ] = isset( $data->value ) ? $data->value : '';
+				$data->field_name                  = substr( $data->field_name, 18 );
+			}
+		}
+
+		if ( isset( $single_field['user_registration_profile_pic_url'] ) ) {
+			if( 'no' === get_option( 'user_registration_disable_profile_picture', 'no' ) ) {
+				update_user_meta( $user_id, 'user_registration_profile_pic_url', $single_field['user_registration_profile_pic_url'] );
+			}
+		}
+
+		$profile = user_registration_form_data( $user_id, $form_id );
+
+		if( isset( $profile['user_registration_profile_pic_url'])) {
+			unset( $profile['user_registration_profile_pic_url'] );
+		}
+
+		foreach ( $profile as $key => $field ) {
+
+			if ( ! isset( $field['type'] ) ) {
+				$field['type'] = 'text';
+			}
+			// Get Value.
+			switch ( $field['type'] ) {
+				case 'checkbox':
+					if ( isset( $single_field[ $key ] ) ) {
+						// Serialize values fo checkbox field.
+						$single_field[ $key ] = ( json_decode( $single_field[ $key ] ) !== null ) ? json_decode( $single_field[ $key ] ) : $single_field[ $key ];
+					}
+					break;
+				case 'wysiwyg' :
+					if ( isset($single_field[ $key ] ) ) {
+						$single_field[ $key ] = sanitize_text_field( htmlentities( $single_field[ $key ] ) );
+					} else {
+						$single_field[ $key ] = '';
+					}
+					break;
+				default:
+					$single_field[ $key ] = isset( $single_field[ $key ] ) ? ur_clean( $single_field[ $key ] ) : '';
+					break;
+			}
+
+			// Hook to allow modification of value.
+			$single_field[ $key ] = apply_filters( 'user_registration_process_myaccount_field_' . $key, $single_field[ $key ] );
+
+			if ( 'user_registration_user_email' === $key ) {
+				do_action( 'user_registration_validate_email_whitelist', $single_field[ $key ], '' );
+
+				// Check if email already exists before updating user details.
+				if ( email_exists( $single_field[ $key ] ) !== $user_id ) {
+					wp_send_json_error(
+						array(
+							'message' => __( 'Email already exists.', 'user-registration' ),
+						)
+					);
+				}
+			}
+
+			$disabled = false;
+			if ( isset( $field['custom_attributes'] ) && isset( $field['custom_attributes']['readonly'] ) && isset( $field['custom_attributes']['disabled'] ) ) {
+				if ( 'readonly' === $field['custom_attributes']['readonly'] || 'disabled' === $field['custom_attributes']['disabled'] ) {
+					$disabled = true;
+				}
+			}
+		}// End foreach().
+
+		do_action( 'user_registration_after_save_profile_validation', $user_id, $profile );
+
+		if ( 0 === ur_notice_count( 'error' ) ) {
+			$user_data = array();
+
+			foreach ( $profile as $key => $field ) {
+				$new_key = str_replace( 'user_registration_', '', $key );
+
+				if ( in_array( $new_key, ur_get_user_table_fields() ) ) {
+
+					if ( $new_key === 'display_name' ) {
+						$user_data['display_name'] = $single_field[ $key ];
+					} else {
+						$user_data[ $new_key ] = $single_field[ $key ];
+					}
+				} else {
+					$update_key = $key;
+
+					if ( in_array( $new_key, ur_get_registered_user_meta_fields() ) ) {
+						$update_key = str_replace( 'user_', '', $new_key );
+					}
+					$disabled = isset( $field['custom_attributes']['disabled'] ) ? $field['custom_attributes']['disabled'] : '';
+
+					if ( $disabled !== 'disabled' ) {
+
+						update_user_meta( $user_id, $update_key, $single_field[ $key ] );
+					}
+				}
+			}
+
+			if ( count( $user_data ) > 0 ) {
+				$user_data['ID'] = get_current_user_id();
+				wp_update_user( $user_data );
+			}
+
+			$message = __( 'User profile updated successfully.', 'user-registration' );
+			do_action( 'user_registration_save_profile_details', $user_id, $form_id );
+
+			wp_send_json_success(
+				array(
+					'message' => $message,
+				)
+			);
+
+		}
+	}
+
+	/**
+	 * Get Post data on frontend form submit
+	 *
+	 * @return void
+	 */
+	public static function profile_pic_upload() {
+
+		check_ajax_referer( 'user_registration_profile_picture_upload_nonce', 'security' );
+
+		$nonce = isset( $_REQUEST['security'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['security'] ) ) : false;
+
+		$flag = wp_verify_nonce( $nonce, 'user_registration_profile_picture_upload_nonce' );
+
+		if ( true != $flag || is_wp_error( $flag ) ) {
+
+			wp_send_json_error(
+				array(
+					'message' => __( 'Nonce error, please reload.', 'user-registration' ),
+				)
+			);
+		}
+		$user_id = get_current_user_id();
+
+		if ( $user_id <= 0 ) {
+			return;
+		}
+
+		if ( isset( $_FILES['file'] ) && $_FILES['file']['size'] ) {
+
+			if ( ! function_exists( 'wp_handle_upload' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+			}
+
+			$upload = isset( $_FILES['file'] ) ? $_FILES['file'] : array();
+
+			// valid extension for image
+			$valid_extensions = $_REQUEST['valid_extension'];
+			$valid_extension_type = explode(',',$valid_extensions);
+			$valid_ext=array();
+
+			foreach($valid_extension_type as $key=>$value){
+				$image_extension = explode('/',$value);
+				$valid_ext[$key]= $image_extension[1];
+			}
+
+			$src_file_name = isset($upload['name'] ) ? $upload['name'] : '';
+			$file_extension = strtolower(pathinfo($src_file_name, PATHINFO_EXTENSION));
+
+			//Validates if the uploaded file has the acceptable extension.
+			if ( ! in_array( $file_extension, $valid_ext ) ) {
+				wp_send_json_error(
+					array(
+						'message' => __( 'Invalid file type, please contact with site administrator.', 'user-registration-advanced-fields' ),
+					)
+				);
+			}
+			$post_overrides = array(
+				'post_status' => 'publish',
+				'post_title'  => $upload['name'],
+			);
+			$attachment_id  = media_handle_sideload( $upload, (int) 0, $post_overrides['post_title'], $post_overrides );
+
+			if ( is_wp_error( $attachment_id ) ) {
+
+				wp_send_json_error(
+					array(
+
+						'message' => $attachment_id->get_error_message(),
+					)
+				);
+			}
+
+			$url = wp_get_attachment_thumb_url( $attachment_id );
+			if ( empty( $url ) ) {
+				$url = home_url() . '/wp-includes/images/media/text.png';
+			}
+
+			wp_send_json_success(
+				array(
+					'url' => $url,
+				)
+			);
+
+		} elseif ( UPLOAD_ERR_NO_FILE !== $_FILES['file']['error'] ) {
+
+			switch ( $_FILES['file']['error'] ) {
+				case UPLOAD_ERR_INI_SIZE:
+					wp_send_json_error(
+						array(
+							'message' => __( 'File size exceed, please check your file size.', 'user-registration' ),
+						)
+					);
+					break;
+				default:
+					wp_send_json_error(
+						array(
+							'message' => __( 'Something went wrong while uploading, please contact your site administrator.', 'user-registration' ),
+						)
+					);
+					break;
+			}
+		}
+		elseif ( empty( $_POST['profile-pic-url'] ) ) {
+			$upload_dir  = wp_upload_dir();
+			$profile_url = get_user_meta( $user_id, 'user_registration_profile_pic_url', true );
+
+			// Check if profile already set?
+			if ( $profile_url ) {
+
+				// Then delete file and user meta.
+				$profile_url = $upload_dir['basedir'] . explode( '/uploads', $profile_url )[1];
+
+				if ( ! empty( $profile_url ) && file_exists( $profile_url ) ) {
+					@unlink( $profile_url );
+				}
+				delete_user_meta( $user_id, 'user_registration_profile_pic_url' );
+			}
+		}
+	}
+
+	/**
+	 * Login from Using Ajax
+	 */
+	public static function ajax_login_submit(){
+	// Custom error messages.
+		$messages = array(
+			'username_is_required' => get_option( 'user_registration_message_username_required', __( 'Username is required.', 'user-registration' ) ),
+			'empty_password'       => get_option( 'user_registration_message_empty_password', null ),
+			'invalid_username'     => get_option( 'user_registration_message_invalid_username', null ),
+			'unknown_email'        => get_option( 'user_registration_message_unknown_email', __( 'A user could not be found with this email address.', 'user-registration' ) ),
+			'pending_approval'     => get_option( 'user_registration_message_pending_approval', null ),
+			'denied_access'        => get_option( 'user_registration_message_denied_account', null ),
+		);
+
+	check_ajax_referer( 'ur_login_form_save_nonce', 'security' );
+
+	$nonce = isset( $_REQUEST['security'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['security'] ) ) : false;
+
+		$flag = wp_verify_nonce( $nonce, 'ur_login_form_save_nonce' );
+
+		if ( true != $flag || is_wp_error( $flag ) ) {
+
+			wp_send_json_error(
+				array(
+					'message' => __( 'Nonce error, please reload.', 'user-registration' ),
+				)
+			);
+		}
+
+    $info = array();
+    $info['user_login'] = sanitize_user( isset($_POST['username'] ) ? $_POST['username']: '' );
+    $info['user_password'] = isset( $_POST['password'] ) ? $_POST['password'] : '';
+    $info['remember'] =isset( $_POST['rememberme'] );
+	$captcha_response  = isset( $_POST['CaptchaResponse'] ) ? $_POST['CaptchaResponse'] : '';
+	$recaptcha_enabled = get_option( 'user_registration_login_options_enable_recaptcha', 'no' );
+	$recaptcha_version = get_option( 'user_registration_integration_setting_recaptcha_version' );
+	$secret_key        = 'v3' === $recaptcha_version ? get_option( 'user_registration_integration_setting_recaptcha_site_secret_v3' ) : get_option( 'user_registration_integration_setting_recaptcha_site_secret' );
+
+	if ( 'yes' == $recaptcha_enabled || '1' == $recaptcha_enabled ) {
+		if ( ! empty( $captcha_response ) ) {
+
+			$data = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret_key . '&response=' . $captcha_response );
+			$data = json_decode( wp_remote_retrieve_body( $data ) );
+
+			if ( empty( $data->success ) || ( isset( $data->score ) && $data->score < apply_filters( 'user_registration_recaptcha_v3_threshold', 0.5 ) ) ) {
+				wp_send_json_error(
+					array(
+						'message' => __( 'Error on google reCaptcha. Contact your site administrator.', 'user-registration' ),
+					)
+				);
+			}
+		} else {
+			wp_send_json_error(
+				array(
+					'message' => get_option( 'user_registration_form_submission_error_message_recaptcha', __( 'Captcha code error, please try again.', 'user-registration' ) ),
+				)
+			);
+		}
+	}
+
+	// perform the table login
+    $user= wp_signon( $info );
+
+    if ( is_wp_error( $user ) ){
+		// set the custom error message
+		if ( ! empty( $user->errors['empty_password'] ) && ! empty( $messages['empty_password'] ) ) {
+						$user->errors['empty_password'][0] = sprintf( '<strong>%s:</strong> %s', __( 'ERROR', 'user-registration' ), $messages['empty_password'] );
+			}
+			if ( ! empty( $user->errors['invalid_username'] ) && ! empty( $messages['invalid_username'] ) ) {
+						$user->errors['invalid_username'][0] = $messages['invalid_username'];
+					}
+					if ( ! empty( $user->errors['pending_approval'] ) && ! empty( $messages['pending_approval'] ) ) {
+						$user->errors['pending_approval'][0] = sprintf( '<strong>%s:</strong> %s', __( 'ERROR', 'user-registration' ), $messages['pending_approval'] );
+					}
+					if ( ! empty( $user->errors['denied_access'] ) && ! empty( $messages['denied_access'] ) ) {
+						$user->errors['denied_access'][0] = sprintf( '<strong>%s:</strong> %s', __( 'ERROR', 'user-registration' ), $messages['denied_access'] );
+					}
+				$message = $user->get_error_message();
+				wp_send_json_error(array('message' => $message ));
+    	} else {
+			if ( in_array( 'administrator', $user->roles ) && 'yes' === get_option( 'user_registration_login_options_prevent_core_login', 'no' ) ) {
+						$redirect = admin_url();
+					} else {
+						if ( ! empty( $_POST['redirect'] ) ) {
+							$redirect = $_POST['redirect'];
+						} elseif ( wp_get_raw_referer() ) {
+							$redirect = wp_get_raw_referer();
+						} else {
+							$redirect = get_home_url();
+						}
+					}
+			$redirect = apply_filters( 'user_registration_login_redirect', $redirect, $user );
+  	   		wp_send_json_success( array( 'message' =>$redirect  ));
+     }
+	wp_send_json( $user );
+	}
+
 	/**
 	 * user input dropped function
 	 */
@@ -226,8 +596,8 @@ class UR_AJAX {
 				throw new Exception( __( 'post data not set', 'user-registration' ) );
 
 			} elseif ( ! isset( $_POST['data']['form_data'] )
-				|| ( isset( $_POST['data']['form_data'] )
-				&& gettype( $_POST['data']['form_data'] ) != 'string' ) ) {
+			|| ( isset( $_POST['data']['form_data'] )
+			&& gettype( $_POST['data']['form_data'] ) != 'string' ) ) {
 
 				throw new Exception( __( 'post data not set', 'user-registration' ) );
 			}
@@ -363,7 +733,7 @@ class UR_AJAX {
 				return true;
 			}
 
-		endif;
+			endif;
 
 		return false;
 	}

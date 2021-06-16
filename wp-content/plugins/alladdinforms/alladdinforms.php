@@ -8,9 +8,6 @@
 
 $dir = 'wp-content/plugins/alladdinforms/';
 
-wp_register_style('alladdinforms_style', '/'.$dir.'assets/css/alladdinforms.css');
-wp_enqueue_style( 'alladdinforms_style');
-
 foreach (glob($dir . "includes/*.php") as $filename) {
   require_once($filename);
 }

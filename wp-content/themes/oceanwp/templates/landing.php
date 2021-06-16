@@ -3,7 +3,9 @@
  * Template Name: Landing Page
  *
  * @package OceanWP WordPress theme
- */ ?>
+ */
+
+?>
 
 <!DOCTYPE html>
 <html class="<?php echo esc_attr( oceanwp_html_classes() ); ?>" <?php language_attributes(); ?>>
@@ -23,7 +25,7 @@
 
 		<div id="outer-wrap" class="site clr">
 
-		<a class="skip-link screen-reader-text" href="#main"><?php esc_html_e( 'Skip to content', 'oceanwp' ); ?></a>
+		<a class="skip-link screen-reader-text" href="#main"><?php oceanwp_theme_strings( 'owp-string-header-skip-link', 'oceanwp' ); ?></a>
 
 			<?php do_action( 'ocean_before_wrap' ); ?>
 
@@ -47,7 +49,10 @@
 
 								<?php do_action( 'ocean_before_content_inner' ); ?>
 
-								<?php while ( have_posts() ) : the_post(); ?>
+								<?php
+								while ( have_posts() ) :
+									the_post();
+									?>
 
 									<div class="entry-content entry clr">
 										<?php the_content(); ?>
@@ -69,13 +74,13 @@
 
 					<?php do_action( 'ocean_after_content_wrap' ); ?>
 
-		        </main><!-- #main-content -->
+				</main><!-- #main-content -->
 
-		        <?php do_action( 'ocean_after_main' ); ?>
+				<?php do_action( 'ocean_after_main' ); ?>
 
-		    </div><!-- #wrap -->
+			</div><!-- #wrap -->
 
-		    <?php do_action( 'ocean_after_wrap' ); ?>
+			<?php do_action( 'ocean_after_wrap' ); ?>
 
 		</div><!-- .outer-wrap -->
 

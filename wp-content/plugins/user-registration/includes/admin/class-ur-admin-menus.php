@@ -267,6 +267,11 @@ if ( ! class_exists( 'UR_Admin_Menus', false ) ) :
 							'label' => 'Single Item',
 							'icon'  => 'ur-icon ur-icon-file-dollar',
 						),
+						array(
+							'id'    => 'user_registration_stripe_gateway',
+							'label' => 'Stripe Gateway',
+							'icon'  => 'ur-icon ur-icon-credit-card',
+						),
 					),
 				),
 			);
@@ -405,6 +410,8 @@ if ( ! class_exists( 'UR_Admin_Menus', false ) ) :
 					return false;
 				}
 
+				$post->post_content = str_replace( '\\', '\\\\', $post->post_content );
+
 				/*
 				 * new post data array
 				 */
@@ -486,8 +493,13 @@ if ( ! class_exists( 'UR_Admin_Menus', false ) ) :
 			}
 
 			$registrations = array_map( 'absint', (array) $_REQUEST['registration'] );
+			$action        = $_REQUEST['action'];
 
-			switch ( $_REQUEST['action'] ) {
+			if( -1 == $_REQUEST['action'] ) {
+				$action = $_REQUEST['action2'];
+			}
+
+			switch ( $action ) {
 				case 'trash':
 					$this->bulk_trash( $registrations );
 					break;
@@ -555,7 +567,7 @@ if ( ! class_exists( 'UR_Admin_Menus', false ) ) :
 		 * Add menu items.
 		 */
 		public function admin_menu() {
-			$registration_page = add_menu_page( __( 'User Registration', 'user-registration' ), __( 'User Registration', 'user-registration' ), 'manage_user_registration', 'user-registration', array( $this, 'registration_page' ), $this->get_icon_svg(), '55.8' );
+			$registration_page = add_menu_page( __( 'User Registration' ), __( 'User Registration' ), 'manage_user_registration', 'user-registration', array( $this, 'registration_page' ), $this->get_icon_svg(), '55.8' );
 
 			add_action( 'load-' . $registration_page, array( $this, 'registration_page_init' ) );
 		}
@@ -668,7 +680,7 @@ if ( ! class_exists( 'UR_Admin_Menus', false ) ) :
 			$registration_table_list->prepare_items();
 			?>
 			<div class="wrap">
-				<h1 class="wp-heading-inline"><?php esc_html_e( 'User Registration', 'user-registration' ); ?></h1>
+				<h1 class="wp-heading-inline"><?php esc_html_e( 'User Registration' ); ?></h1>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=add-new-registration' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'user-registration' ); ?></a>
 				<hr class="wp-header-end">
 				<form id="registration-list" method="post">
@@ -824,7 +836,8 @@ if ( ! class_exists( 'UR_Admin_Menus', false ) ) :
 			}
 
 			try {
-				$form_data_array = json_decode( $form_data_content );
+				$form_data_content = str_replace( '"noopener noreferrer"', "'noopener noreferrer'", $form_data_content );
+				$form_data_array   = json_decode( $form_data_content );
 
 				if ( json_last_error() != JSON_ERROR_NONE ) {
 					throw new Exception( '' );
@@ -847,12 +860,12 @@ if ( ! class_exists( 'UR_Admin_Menus', false ) ) :
 			echo '<div class="ur-builder-wrapper-content">';
 			?>
 			<div class="ur-builder-header">
-				<div class="ur-form-name-wrapper">
+				<div class="user-registration-editable-title ur-form-name-wrapper ur-my-4">
 					<?php
 					$form_title = isset( $form_data->post_title ) ? trim( $form_data->post_title ) : __( 'Untitled', 'user-registration' );
 					?>
-					<input name="ur-form-name" id="ur-form-name" type="text" class="ur-form-name regular-text menu-item-textbox" value="<?php echo esc_html( $form_title ); ?>" data-editing="false">
-					<span id="ur-form-name-edit-button" class="ur-edit-form-name dashicons dashicons-edit"></span>
+					<input name="ur-form-name" id="ur-form-name" type="text" class="user-registration-editable-title__input ur-form-name regular-text menu-item-textbox" value="<?php echo esc_html( $form_title ); ?>" data-editing="false">
+					<span id="ur-form-name-edit-button" class="user-registration-editable-title__icon ur-edit-form-name dashicons dashicons-edit"></span>
 				</div>
 				<div class="ur-builder-header-right">
 					<?php do_action( 'user_registration_builder_header_extra', $form_data->ID, $form_data_array ); ?>
@@ -918,10 +931,14 @@ if ( ! class_exists( 'UR_Admin_Menus', false ) ) :
 					foreach ( $grid_lists as $single_field ) {
 
 						if ( isset( $single_field->field_key ) ) {
+							// Hook for fields backward compatibility.
+							apply_filters( 'user_registration_form_builder_field_before', $single_field );
+
 							$admin_field = $this->get_admin_field( $single_field );
 							echo '<div class="ur-selected-item">';
 							echo '<div class="ur-action-buttons"><span title="Clone" class="dashicons dashicons-admin-page ur-clone"></span><span title="Trash" class="dashicons dashicons-trash ur-trash"></span></div>';
-							echo $admin_field['template']; // @codingStandardsIgnoreLine
+							$template = isset( $admin_field['template'] ) ? $admin_field['template'] : '' ; // @codingStandardsIgnoreLine
+							echo $template;
 							echo '</div>';
 						}
 					}

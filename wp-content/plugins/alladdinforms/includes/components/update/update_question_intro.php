@@ -3,7 +3,8 @@ function update_question_intro($a) {
   global $wpdb;
   $conn = $wpdb->get_results("SELECT * FROM `wp_forms` WHERE ID=" . $_POST['form_id']);
 
-  $result = '<form action="/'. $a .'" method="post">
+  $result = '<br><br>
+              <form action="/'. $a .'" method="post">
               <label for="intro"><b>Introtext</b></label>
               <textarea type="text" placeholder="Introtext" name="intro" required>';
 

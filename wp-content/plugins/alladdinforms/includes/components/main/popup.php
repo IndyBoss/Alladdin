@@ -1,7 +1,7 @@
 <?php
 
 function popup($a) {
-  $result = '<button type="submit" id="dropBtn" onclick="openForm()">Formulier toevoegen +</button>
+  $result = '<br><br><button type="submit" id="dropBtn" onclick="openForm()">Formulier toevoegen +</button>
 
   <div class="form-popup" id="myForm" style="display: none;z-index: 9;padding: 15px;background-color:#f5F5F5;">
     <form action="/'. $a .'" method="post">

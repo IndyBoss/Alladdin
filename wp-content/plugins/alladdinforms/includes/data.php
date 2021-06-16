@@ -1,7 +1,7 @@
 <?php
 function data() {
 	global $wpdb;
-	$result = '';
+	$result = '<br><br>';
 	$charts = "";
 
 	$choiceQ="";
@@ -30,11 +30,11 @@ function data() {
         $result .= '<br><h5 style="margin-bottom:0;">('.$totalChoice.' antwoorden) '. $count . '. ' . $c->question .'</h5><ol>';
 
         $pieces = explode("|", $c->text);
-        for ($i=1; $i <= $c->parts; $i++) {
+        for ($i=0; $i < $c->parts; $i++) {
           foreach ($qanswer as $qa) {
             if ($qa->answer == $pieces[$i]) {
               $qtotal[$i] += 1;
-            } else {$qtotal[$i] += 0;}
+            }
           }
 					$perc = number_format(($qtotal[$i] / $totalChoice) * 100, 2, ',', '');
 					$result .= "<li>".$pieces[$i]. " (".$perc."%)</li>";
@@ -60,7 +60,7 @@ function data() {
             for ($j=1; $j < count($p); $j++) {
               if ($p[$j] == $pieces[$i]) {
                 $qtotal[$i] += 1;
-              } else {$qtotal[$i] += 0;}
+              }
             }
           }
           $perc = number_format(($qtotal[$i] / $totalMultiple) * 100, 2, ',', '');
