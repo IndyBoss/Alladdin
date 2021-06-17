@@ -14,7 +14,7 @@ function add_form( $atts ) {
 
 
   // ALERTS ON PAGE
-  $result .= get_alerts();
+  $result .= get_alerts() . '<button type="button" class="questions-btn margin-bottom" onclick="location.href='."'/questionaires'".'">Terug</button>';
 
   // ADDING AND EDITING FORM
   if (isset($_POST['method'])) {

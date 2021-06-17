@@ -27,11 +27,6 @@ $questionaires_url = get_field('questionaires_url') ?: 'questionaires';
 
 
 ?>
-<div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?> main_text">
-  <h1>Wat zijn je voorkeuren?</h1>
-  <h2>Jij kiest welke van de volgende 2 keuzes je verkiest en je krijgt punten. Makkie toch!</h2>
-  <hr>
-
   <?php
     if (current_user_can('subscriber') || current_user_can('administrator')) {
       global $wpdb;
@@ -41,6 +36,13 @@ $questionaires_url = get_field('questionaires_url') ?: 'questionaires';
       if ( date("Y-m-d") != get_user_last_date() ) {
         update_user_new_day();
       }
+
+      ?>
+        <div id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($className); ?> main_text">
+          <h1>Wat zijn je voorkeuren?</h1>
+          <h2>Jij kiest welke van de volgende 2 keuzes je verkiest en je krijgt punten. Makkie toch!</h2>
+          <hr>
+      <?php
 
       // Check if a user answered 5 questions
       if (get_user_questions_today() >= 4) {
@@ -91,7 +93,6 @@ $questionaires_url = get_field('questionaires_url') ?: 'questionaires';
           </form>
         </div>
         <div class="questions-btns">
-          <!-- <h3>Totale punten: <?php echo get_user_points() ?></h3> -->
           <button type="button" class="questions-btn" onclick="location.href='/<?php echo $questionaires_url ?>'">Vragenlijsten voor extra punten</button>
           <?php if (!current_user_can('subscriber')): ?>
             <button type="button" class="questions-btn" onclick="location.href='/<?php echo $edit_url ?>'"> &#9998; Campagnes aanpassen</button>
@@ -100,6 +101,6 @@ $questionaires_url = get_field('questionaires_url') ?: 'questionaires';
         <?php
       }
     } elseif (is_user_logged_in() && !current_user_can('subscriber') && !current_user_can('administrator')) {
-      ?><button type="button" class="questions-btn" onclick="location.href='/<?php echo $questionaires_url ?>'">Vragenlijsten voor extra punten</button><?php
+      ?><button type="button" class="questions-btn" onclick="location.href='/<?php echo $questionaires_url ?>'">Vragenlijsten beheren</button><?php
     }?>
 </div>

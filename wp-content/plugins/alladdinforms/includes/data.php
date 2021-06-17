@@ -12,7 +12,8 @@ function data() {
   $conn = $wpdb->get_results("SELECT * FROM `wp_question` WHERE form_id=" . $f[0]->ID);
   $count = 1;
 
-  $result = '<div><h1>'.$f[0]->name.'</h1>';
+  $result = '<button type="button" class="questions-btn margin-bottom" onclick="location.href='."'/questionaires'".'">Terug</button><br>
+							<div><h1>'.$f[0]->name.'</h1>';
 
   if ($conn[0]->ID == '') {
     $result .= '<p>Nog geen vragen in dit formulier.</p>';
@@ -30,7 +31,7 @@ function data() {
         $result .= '<br><h5 style="margin-bottom:0;">('.$totalChoice.' antwoorden) '. $count . '. ' . $c->question .'</h5><ol>';
 
         $pieces = explode("|", $c->text);
-        for ($i=0; $i < $c->parts; $i++) {
+        for ($i=1; $i <= $c->parts; $i++) {
           foreach ($qanswer as $qa) {
             if ($qa->answer == $pieces[$i]) {
               $qtotal[$i] += 1;

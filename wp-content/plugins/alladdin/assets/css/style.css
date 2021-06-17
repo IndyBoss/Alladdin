@@ -6,6 +6,10 @@ button {
   transition: all 0.3s;
 }
 
+.margin-bottom {
+  margin-bottom: 20px;
+}
+
 .center {
   text-align: center;
 }
