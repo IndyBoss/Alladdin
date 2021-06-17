@@ -2,6 +2,10 @@
   padding-bottom: 0 !important;
 }
 
+button {
+  transition: all 0.3s;
+}
+
 .center {
   text-align: center;
 }
@@ -178,7 +182,7 @@
     border: none;
 }
 .home-top-button:hover, .home-bottom-button:hover  {
-    background-color: #F2EFF1;
+  background-color: #eaeaea;
 }
 
 /**** HOME PARTNERS ****/

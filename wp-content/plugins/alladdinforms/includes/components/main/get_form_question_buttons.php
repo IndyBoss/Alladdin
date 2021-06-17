@@ -2,7 +2,7 @@
 
 function get_form_question_buttons($questions_url, $form_id, $view_url) {
   $result = '
-  <br><br>
+  
   <div style="display: grid;grid-column-gap: 10px;grid-row-gap: 15px;justify-content: right;grid-template-columns: auto auto auto auto auto auto;grid-template-rows: auto;margin-bottom: 15px;">
     <form action="/'. $questions_url .'" method="post">
       <input type="hidden" name="qtype" value="4">

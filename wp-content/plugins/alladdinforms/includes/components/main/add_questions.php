@@ -4,7 +4,7 @@ function add_questions( $atts ) {
   $a = shortcode_atts( array('add_url'=>'#', 'questions_url'=>'#', 'view_url'=>'#'), $atts );
   $add_url = esc_attr($a['add_url']);
   $questions_url = esc_attr($a['questions_url']);
-  $result = '<br><br>';
+  $result = '';
 
   if (isset($_POST['qtype']) && $_POST['method'] == 'qadd') {
     $result .= '<form action="/'.$add_url.'" method="post">

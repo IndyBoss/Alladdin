@@ -49,14 +49,14 @@ $conn = $wpdb->get_results('SELECT * FROM wp_t9smq8bdpj_prize ORDER BY price');
           <input type="hidden" name="price" value="<?php echo $row->price; ?>">
           <button type="submit">
             <img src="../wp-content/plugins/alladdin/assets/images/<?php echo $row->name; ?>.jpg">
-            <p><?php echo $row->price; ?> points</p>
+            <p><?php echo $row->price; ?> punten</p>
           </button>
         </form>
       <?php else: ?>
         <form action="" method="post">
           <button type="submit" class="isDisabled" disabled>
             <img src="../wp-content/plugins/alladdin/assets/images/<?php echo $row->name; ?>.jpg">
-            <p><?php echo $row->price; ?> points</p>
+            <p><?php echo $row->price; ?> punten</p>
           </button>
         </form>
       <?php endif ?>

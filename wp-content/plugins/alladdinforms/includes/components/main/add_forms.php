@@ -10,7 +10,7 @@ function add_form( $atts ) {
     $g_id = get_groupid();
   }
   $form_gid = get_form_group_id();
-  $result = '<br><br>';
+  $result = '';
 
 
   // ALERTS ON PAGE

@@ -1,7 +1,7 @@
 <?php
 
 function get_question_edit_buttons($questions_url, $add_url, $form_id, $question_id, $question, $question_type, $update, $counter) {
-  $result = '<br><br>
+  $result = '
   <div style="
   display:grid;
   grid-column-gap:10px;
